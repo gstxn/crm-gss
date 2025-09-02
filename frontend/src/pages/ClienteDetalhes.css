@@ -1,0 +1,588 @@
+.cliente-detalhes-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.cliente-detalhes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header-left h1 {
+  margin: 0;
+  color: #333;
+}
+
+.cliente-tipo {
+  display: inline-block;
+  background-color: #e0f2f1;
+  color: #00796b;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-voltar {
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-editar {
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.btn-excluir {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s;
+}
+
+.tabs button:hover {
+  color: #333;
+  background-color: #f5f5f5;
+}
+
+.tabs button.active {
+  color: #2196F3;
+  border-bottom-color: #2196F3;
+  font-weight: 500;
+}
+
+.tab-content {
+  min-height: 300px;
+}
+
+.info-card {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.info-card h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 18px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.info-label {
+  font-weight: 500;
+  width: 150px;
+  color: #666;
+}
+
+.info-value {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.contato-item {
+  border: 1px solid #eee;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: #f9f9f9;
+}
+
+.contato-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.contato-header h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.tag-principal {
+  background-color: #2196F3;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.contato-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+  color: #666;
+  font-size: 14px;
+}
+
+.observacoes {
+  white-space: pre-line;
+  color: #666;
+  line-height: 1.5;
+}
+
+.tab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.tab-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.btn-nova-oportunidade {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.oportunidades-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.oportunidade-card {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.oportunidade-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.oportunidade-titulo {
+  font-weight: 500;
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.oportunidade-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.oportunidade-status {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.status-prospeccao {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.status-qualificacao {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-proposta {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+.status-negociacao {
+  background-color: #fff8e1;
+  color: #f9a825;
+}
+
+.status-fechada {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-perdida {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.oportunidade-valor {
+  font-weight: 500;
+  color: #333;
+}
+
+.oportunidade-data {
+  font-size: 12px;
+  color: #666;
+}
+
+.empty-message {
+  text-align: center;
+  padding: 30px;
+  color: #666;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.link-nova-oportunidade {
+  color: #2196F3;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.adicionar-historico {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.adicionar-historico h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 16px;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+  flex: 1;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.form-group select,
+.form-group textarea {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.btn-adicionar {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.historico-timeline {
+  margin-top: 30px;
+}
+
+.historico-item {
+  display: flex;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.historico-item::before {
+  content: '';
+  position: absolute;
+  left: 100px;
+  top: 30px;
+  bottom: -20px;
+  width: 2px;
+  background-color: #ddd;
+  z-index: 0;
+}
+
+.historico-item:last-child::before {
+  display: none;
+}
+
+.historico-data {
+  width: 100px;
+  font-size: 12px;
+  color: #666;
+  padding-right: 20px;
+  text-align: right;
+  padding-top: 5px;
+}
+
+.historico-conteudo {
+  flex: 1;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.historico-tipo {
+  font-weight: 500;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.historico-descricao {
+  margin-bottom: 10px;
+  white-space: pre-line;
+  line-height: 1.5;
+}
+
+.historico-usuario {
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.warning-icon {
+  color: #f44336;
+  font-size: 24px;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.warning-text {
+  color: #f44336;
+  font-weight: 500;
+}
+
+.modal-footer {
+  padding: 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-cancelar {
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px 15px;
+  cursor: pointer;
+}
+
+.btn-confirmar {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 15px;
+  cursor: pointer;
+}
+
+.btn-confirmar:disabled,
+.btn-cancelar:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.loading-message,
+.error-message {
+  text-align: center;
+  padding: 30px;
+  color: #666;
+}
+
+.error-message {
+  color: #f44336;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 30px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .cliente-detalhes-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .header-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .tabs {
+    flex-wrap: wrap;
+  }
+  
+  .tabs button {
+    flex: 1;
+    min-width: 120px;
+  }
+  
+  .info-row {
+    flex-direction: column;
+  }
+  
+  .info-label {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+  
+  .oportunidades-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .historico-item {
+    flex-direction: column;
+  }
+  
+  .historico-item::before {
+    left: 10px;
+    top: 50px;
+  }
+  
+  .historico-data {
+    width: 100%;
+    text-align: left;
+    padding-left: 30px;
+    padding-right: 0;
+  }
+}

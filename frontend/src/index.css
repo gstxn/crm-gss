@@ -1,0 +1,28 @@
+/* Tailwind base, components e utilities */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import design system files */
+@import './styles/variables.css';
+@import './styles/theme.css';
+@import './styles/utils.css';
+@import './styles/forms.css';
+@import './styles/tables.css';
+@import './styles/cards.css';
+@import './styles/layouts.css';
+@import './styles/badges.css';
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  line-height: var(--line-height-normal);
+}
+
+code {
+  font-family: var(--font-family-mono);
+}

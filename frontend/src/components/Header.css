@@ -1,0 +1,189 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--white);
+  box-shadow: var(--shadow-bottom);
+}
+
+.menu-btn {
+  display: none;
+}
+
+.header-title h1 {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  color: var(--text-color);
+  font-weight: var(--font-weight-medium);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+}
+
+.notification-container {
+  position: relative;
+  margin-right: var(--spacing-lg);
+}
+
+.notification-btn {
+  background: none;
+  border: none;
+  font-size: var(--font-size-lg);
+  color: var(--text-secondary);
+  cursor: pointer;
+  position: relative;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: var(--primary-color);
+  color: var(--white);
+  font-size: var(--font-size-xxs);
+  width: 16px;
+  height: 16px;
+  border-radius: var(--border-radius-circle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-dropdown {
+  position: absolute;
+  top: 100%;
+  right: -10px;
+  width: 300px;
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  padding: 15px;
+  z-index: 1000;
+  margin-top: 10px;
+}
+
+.notification-dropdown h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: var(--text-color);
+}
+
+.notification-dropdown ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notification-dropdown li {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--medium-gray);
+}
+
+.notification-dropdown li:last-child {
+  border-bottom: none;
+}
+
+.notification-dropdown p {
+  margin: 0 0 5px 0;
+  font-size: 14px;
+}
+
+.notification-dropdown ul li a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.notification-dropdown ul li.ver-todas {
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+  margin-top: 5px;
+  text-align: center;
+}
+
+.notification-dropdown ul li.ver-todas a {
+  color: #4a90e2;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.notification-dropdown small {
+  color: var(--dark-gray);
+  font-size: 12px;
+}
+
+.no-notifications {
+  color: var(--dark-gray);
+  text-align: center;
+  font-size: 14px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.user-name {
+  margin-right: 10px;
+  font-weight: 500;
+}
+
+.user-avatar {
+  width: 35px;
+  height: 35px;
+  background-color: var(--light-gray);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dark-gray);
+}
+
+/* Responsividade */
+body.sidebar-collapsed .header-title .logo {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .menu-btn {
+    display: block;
+    background: none;
+    border: none;
+    font-size: 24px;
+    margin-right: 10px;
+    cursor: pointer;
+    color: var(--primary-color);
+  }
+  .header {
+    padding: 10px 15px;
+  }
+  
+  .header-title h1 {
+    font-size: 18px;
+  }
+  
+  .user-name {
+    display: none;
+  }
+  
+  .notification-dropdown {
+    width: 250px;
+    right: -100px;
+  }
+}
+
+.header-title .logo {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  color: var(--primary-color);
+  font-weight: var(--font-weight-bold);
+  text-decoration: none;
+}
+
+.header-title .logo:hover {
+  color: var(--primary-dark);
+}

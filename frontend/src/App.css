@@ -1,0 +1,23 @@
+/* App specific styles */
+
+/* App specific styles */
+.App {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Estilos específicos do App que não foram movidos para os arquivos de tema */
+
+/* Estilos específicos do App que não foram movidos para os arquivos de tema */
+
+/* Estilos específicos do App que não foram movidos para os arquivos de tema */
+
+/* Estilos específicos do App */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: var(--font-size-lg);
+  color: var(--primary-color);
+}

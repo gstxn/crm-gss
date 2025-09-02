@@ -1,0 +1,106 @@
+@import './variables.css';
+
+/* Estilos para badges e indicadores de status */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-lg);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+}
+
+.badge-sm {
+  padding: calc(var(--spacing-xs) / 2) var(--spacing-xs);
+  font-size: calc(var(--font-size-xs) - 2px);
+}
+
+.badge-lg {
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--font-size-sm);
+}
+
+/* Variantes de cores */
+.badge-primary {
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.badge-secondary {
+  background-color: var(--secondary-light);
+  color: var(--secondary-dark);
+}
+
+.badge-success {
+  background-color: var(--success-light);
+  color: var(--success-dark);
+}
+
+.badge-warning {
+  background-color: var(--warning-light);
+  color: var(--warning-dark);
+}
+
+.badge-danger {
+  background-color: var(--danger-light);
+  color: var(--danger-dark);
+}
+
+.badge-info {
+  background-color: var(--info-light);
+  color: var(--info-dark);
+}
+
+/* Indicadores de status */
+.status-indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: var(--border-radius-circle);
+  margin-right: var(--spacing-xs);
+}
+
+.status-active {
+  background-color: var(--success-color);
+}
+
+.status-pending {
+  background-color: var(--warning-color);
+}
+
+.status-inactive {
+  background-color: var(--danger-color);
+}
+
+/* Status com texto */
+.status-with-text {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Pill badges */
+.badge-pill {
+  border-radius: 50px;
+}
+
+/* Badges com ícones */
+.badge-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.badge-with-icon svg {
+  font-size: calc(var(--font-size-xs) + 2px);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .badge {
+    padding: calc(var(--spacing-xs) - 1px) calc(var(--spacing-sm) - 2px);
+  }
+}

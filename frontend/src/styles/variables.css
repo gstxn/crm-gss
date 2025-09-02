@@ -1,0 +1,103 @@
+:root {
+  /* Cores principais */
+  --primary-color: #05c46b;
+  --primary-light: #7bed9f;
+  --primary-dark: #049e53;
+  
+  /* Cores secundárias */
+  --secondary-color: #00a0dc;
+  --secondary-light: #5bc6f4;
+  --secondary-dark: #007bb2;
+  
+  /* Cores de status */
+  --success-color: #4CAF50;
+  --success-light: #e8f5e9;
+  --success-dark: #2e7d32;
+  
+  --warning-color: #FFA000;
+  --warning-light: #fff8e1;
+  --warning-dark: #ff8f00;
+  
+  --danger-color: #F44336;
+  --danger-light: #ffebee;
+  --danger-dark: #c62828;
+  
+  --info-color: #2196F3;
+  --info-light: #e3f2fd;
+  --info-dark: #1976d2;
+  
+  /* Cores neutras */
+  --white: #ffffff;
+  --light-gray: #f5f5f5;
+  --medium-gray: #e0e0e0;
+  --dark-gray: #666666;
+  --text-color: #333333;
+  --border-color: #dddddd;
+  
+  /* Tipografia */
+  --font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+  --font-family-mono: 'Consolas', 'Monaco', 'Courier New', monospace;
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+  --font-size-xxl: 32px;
+  --font-size-xxs: 10px;
+  
+  /* Font weights */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* Line heights */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  
+  /* Espaçamento */
+  --spacing-xs: 5px;
+  --spacing-sm: 10px;
+  --spacing-md: 15px;
+  --spacing-lg: 20px;
+  --spacing-xl: 30px;
+  
+  /* Bordas e sombras */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-circle: 50%;
+  
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 10px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 4px 20px rgba(0, 0, 0, 0.15);
+  
+  /* Transições */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  
+  /* Layout */
+  --sidebar-width: 250px;
+  --header-height: 60px;
+  --content-max-width: 1200px;
+  --container-max-width: 1200px;
+  
+  /* Backgrounds */
+  --background-color: #f5f5f5;
+  --background-light: #f9f9f9;
+  --background-dark: #e0e0e0;
+  
+  /* Outros */
+  --shadow-focus: 0 0 0 3px rgba(0, 168, 107, 0.2);
+  --shadow-bottom: 0 2px 5px rgba(0, 0, 0, 0.1);
+  --text-secondary: #666666;
+  
+  /* Z-index */
+  --z-index-dropdown: 100;
+  --z-index-modal: 1000;
+  --z-index-sidebar: 900;
+  --z-index-header: 800;
+}
