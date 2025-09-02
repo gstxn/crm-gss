@@ -1,0 +1,74 @@
+.pending-tasks-page {
+  padding: 20px;
+}
+
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+  max-width: 500px;
+}
+
+.task-form input,
+.task-form textarea {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.task-form button {
+  background-color: #28a745;
+  color: #fff;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.task-form button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.tasks-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tasks-table th,
+.tasks-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.tasks-table th {
+  background-color: #f4f4f4;
+}
+
+.complete-btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+@media (max-width: 600px) {
+  .task-form {
+    max-width: 100%;
+  }
+
+  .tasks-table {
+    font-size: 12px;
+  }
+}
