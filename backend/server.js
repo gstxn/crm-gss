@@ -21,7 +21,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: process.env.FRONTEND_URL || '*',
   credentials: true
 }));
 
@@ -73,6 +73,13 @@ app.use((err, req, res, next) => {
 
 // Definir porta e iniciar o servidor
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Servidor rodando em modo ${process.env.NODE_ENV} na porta ${PORT}`);
-});
+
+// Para compatibilidade com Vercel, verificamos se estamos em produção
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Servidor rodando em modo ${process.env.NODE_ENV} na porta ${PORT}`);
+  });
+}
+
+// Exportar o app para Vercel
+module.exports = app;
