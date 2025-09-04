@@ -10,6 +10,8 @@ dotenv.config();
 
 // Flag para habilitar ou desabilitar rotas administrativas (por padrão habilitado)
 const ADMIN_ENABLED = process.env.ADMIN_ENABLED !== 'false';
+// Flag para habilitar ou desabilitar o módulo Kanban (por padrão habilitado)
+const KANBAN_ENABLED = process.env.KANBAN_ENABLED !== 'false';
 
 // Conectar ao banco de dados
 connectDB();
@@ -37,6 +39,11 @@ app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 app.use('/api/tasks', require('./routes/taskRoutes'));
 app.use('/api/mensagens', require('./routes/mensagemRoutes'));
 app.use('/api', require('./routes/utilsRoutes')); // Rotas para especialidades, estados e cidades
+
+// Kanban routes (v1)
+if (KANBAN_ENABLED) {
+  app.use('/api/kanban/v1', require('./routes/kanbanRoutes'));
+}
 
 // Rotas administrativas
 if (ADMIN_ENABLED) {
