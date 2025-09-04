@@ -40,10 +40,9 @@ app.use('/api/tasks', require('./routes/taskRoutes'));
 app.use('/api/mensagens', require('./routes/mensagemRoutes'));
 app.use('/api', require('./routes/utilsRoutes')); // Rotas para especialidades, estados e cidades
 
-// Kanban routes (v1)
-if (KANBAN_ENABLED) {
-  app.use('/api/kanban/v1', require('./routes/kanbanRoutes'));
-}
+// Kanban routes (v1) com middleware de feature flag
+const kanbanFlagMiddleware = require('./middleware/kanbanFlagMiddleware');
+app.use('/api/kanban/v1', kanbanFlagMiddleware, require('./routes/kanbanRoutes'));
 
 // Rotas administrativas
 if (ADMIN_ENABLED) {
