@@ -94,9 +94,21 @@ exports.moveCard = asyncHandler(async (req, res) => {
   const { listId, position } = req.body;
   const card = await KanbanCard.findById(req.params.id);
   if (!card) return res.status(404).json({ message: 'Card não encontrado' });
-  card.list = listId || card.list;
+
+  const originalListId = card.list.toString();
+  const targetListId = listId || originalListId;
+
+  // Atualiza list & posição provisória
+  card.list = targetListId;
   card.position = typeof position === 'number' ? position : card.position;
   await card.save();
+
+  // Reindexa listas
+  await reindexListCards(originalListId);
+  if (targetListId !== originalListId) {
+    await reindexListCards(targetListId);
+  }
+
   res.json(card);
 });
 
@@ -120,4 +132,38 @@ exports.deleteComment = asyncHandler(async (req, res) => {
   }
   await comment.remove();
   res.json({ message: 'Comentário removido' });
+});
+
+// Helper: garante posições sequenciais 0..n em uma lista
+async function reindexListCards(listId) {
+  const cards = await KanbanCard.find({ list: listId }).sort('position');
+  await Promise.all(cards.map((c, idx) => {
+    if (c.position !== idx) {
+      c.position = idx;
+      return c.save();
+    }
+    return Promise.resolve();
+  }));
+}
+
+exports.getBoardDetails = asyncHandler(async (req, res) => {
+  const board = await KanbanBoard.findById(req.params.id);
+  if (!board) return res.status(404).json({ message: 'Board não encontrado' });
+
+  // Verifica se usuário tem acesso
+  const userId = req.user._id;
+  const isMember = board.owner.equals(userId) || board.members.includes(userId);
+  if (!isMember) return res.status(403).json({ message: 'Sem permissão' });
+
+  // Busca listas e cartões
+  const lists = await KanbanList.find({ board: board._id }).sort('position');
+  const listIds = lists.map((l) => l._id);
+  const cards = await KanbanCard.find({ list: { $in: listIds } }).sort('position');
+
+  const listsWithCards = lists.map((l) => ({
+    ...l.toObject(),
+    cards: cards.filter((c) => c.list.equals(l._id)),
+  }));
+
+  res.json({ ...board.toObject(), lists: listsWithCards });
 });
