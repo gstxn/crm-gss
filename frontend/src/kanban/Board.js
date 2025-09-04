@@ -89,36 +89,41 @@ const Board = () => {
   );
 
   useEffect(() => {
-    // Futuramente carregar do backend; por enquanto mock estático
     const fetchData = async () => {
       try {
-        const { data } = await axios.get("/api/kanban/v1/boards");
-        if (data?.length) {
-          setLists(data[0].lists || []);
+        // Primeiro busca todos os boards do usuário
+        const { data: boards } = await axios.get("/api/kanban/v1/boards");
+        if (boards?.length) {
+          const boardId = boards[0]._id;
+          // Busca detalhes do board específico (listas + cards)
+          const { data: boardDetails } = await axios.get(`/api/kanban/v1/boards/${boardId}`);
+          setLists(boardDetails.lists || []);
+          return;
         }
       } catch (err) {
-        // Mock fallback
-        setLists([
-          {
-            _id: "list-1",
-            title: "A Fazer",
-            cards: [
-              { _id: "card-1", title: "Primeira tarefa" },
-              { _id: "card-2", title: "Segunda tarefa" },
-            ],
-          },
-          {
-            _id: "list-2",
-            title: "Em Progresso",
-            cards: [{ _id: "card-3", title: "Implementar Kanban" }],
-          },
-          {
-            _id: "list-3",
-            title: "Concluído",
-            cards: [],
-          },
-        ]);
+        console.error("Erro ao carregar Kanban:", err?.response?.data || err.message);
       }
+      // Mock fallback em caso de erro ou sem boards
+      setLists([
+        {
+          _id: "list-1",
+          title: "A Fazer",
+          cards: [
+            { _id: "card-1", title: "Primeira tarefa" },
+            { _id: "card-2", title: "Segunda tarefa" },
+          ],
+        },
+        {
+          _id: "list-2",
+          title: "Em Progresso",
+          cards: [{ _id: "card-3", title: "Implementar Kanban" }],
+        },
+        {
+          _id: "list-3",
+          title: "Concluído",
+          cards: [],
+        },
+      ]);
     };
     fetchData();
   }, []);

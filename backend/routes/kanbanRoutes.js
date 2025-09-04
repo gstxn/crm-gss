@@ -10,6 +10,7 @@ const { protect } = require('../middleware/authMiddleware');
 const {
   createBoard,
   getBoards,
+  getBoardDetails,
   updateBoard,
   archiveBoard,
   createList,
@@ -21,6 +22,7 @@ const {
   deleteComment,
 } = require('../controllers/kanbanController');
 
+router.get('/boards/:id', protect, getBoardDetails);
 // ===== Boards =====
 router.post('/boards', protect, createBoard);
 router.get('/boards', protect, getBoards);
