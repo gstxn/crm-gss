@@ -14,6 +14,7 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
+  useSortable
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -26,7 +27,7 @@ const findListContainingCard = (lists, cardId) =>
 /***********************************
  *  Componente Card Sortable
  ***********************************/
-import { useSortable } from "@dnd-kit/sortable";
+// removed duplicate import useSortable here
 const Card = ({ card }) => {
   const {
     attributes,
