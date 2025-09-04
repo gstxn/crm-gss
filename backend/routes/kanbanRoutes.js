@@ -15,6 +15,7 @@ const {
   archiveBoard,
   createList,
   updateList,
+  moveList,
   createCard,
   updateCard,
   moveCard,
@@ -32,6 +33,7 @@ router.put('/boards/:id/archive', protect, archiveBoard);
 // ===== Lists =====
 router.post('/boards/:boardId/lists', protect, createList);
 router.put('/lists/:id', protect, updateList);
+router.put('/lists/:id/move', protect, moveList);
 
 // ===== Cards =====
 router.post('/lists/:listId/cards', protect, createCard);
