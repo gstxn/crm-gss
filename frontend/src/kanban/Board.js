@@ -162,6 +162,15 @@ const Board = () => {
     setLists(newLists);
 
     // TODO: Persistir mudança no backend (patch posição)
+    axios
+      .put(`/api/kanban/v1/cards/${active.id}/move`, {
+        listId: targetList._id,
+        position: newTargetCards.length - 1,
+      })
+      .catch((err) => {
+        console.error("Erro ao mover card:", err?.response?.data || err.message);
+        // TODO: Reverter UI se falhar
+      });
   };
 
   return (
