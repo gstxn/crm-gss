@@ -25,6 +25,7 @@ import NovaMensagem from './pages/Mensagens/NovaMensagem';
 import Register from './pages/Register';
 import CompletedTasks from './pages/CompletedTasks';
 import PendingTasks from './pages/PendingTasks';
+import Kanban from './pages/Kanban';
 
 // Admin imports
 import AdminLayout from './admin/AdminLayout';
@@ -101,6 +102,7 @@ function App() {
         <Route path="/relatorios" element={<ProtectedRoute><Relatorios /></ProtectedRoute>} />
         <Route path="/tarefas-concluidas" element={<ProtectedRoute><CompletedTasks /></ProtectedRoute>} />
         <Route path="/tarefas-pendentes" element={<ProtectedRoute><PendingTasks /></ProtectedRoute>} />
+        <Route path="/kanban" element={<ProtectedRoute><Kanban /></ProtectedRoute>} />
         {ADMIN_ENABLED && <Route path="/admin/login" element={<AdminLogin />} />}
         {ADMIN_ENABLED && (
           <Route path="/admin/*" element={
