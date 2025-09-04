@@ -14,7 +14,9 @@ const ADMIN_ENABLED = process.env.ADMIN_ENABLED !== 'false';
 const KANBAN_ENABLED = process.env.KANBAN_ENABLED !== 'false';
 
 // Conectar ao banco de dados
-connectDB();
+if (process.env.NODE_ENV !== 'test') {
+  connectDB();
+}
 
 // Inicializar o app Express
 const app = express();
@@ -80,8 +82,8 @@ app.use((err, req, res, next) => {
 // Definir porta e iniciar o servidor
 const PORT = process.env.PORT || 5000;
 
-// Para compatibilidade com Vercel, verificamos se estamos em produção
-if (process.env.NODE_ENV !== 'production') {
+// Inicia servidor apenas quando este arquivo é executado diretamente (evita conflito em testes)
+if (require.main === module && process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => {
     console.log(`Servidor rodando em modo ${process.env.NODE_ENV} na porta ${PORT}`);
   });

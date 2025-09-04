@@ -1,0 +1,67 @@
+// Prisma schema for Kanban module using PostgreSQL
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id         String          @id @default(uuid())
+  email      String          @unique
+  name       String?
+  boards     KanbanBoard[]   @relation("BoardMembers")
+  cards      KanbanCard[]    @relation("CardAssignees")
+  comments   KanbanComment[]
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+}
+
+model KanbanBoard {
+  id         String         @id @default(uuid())
+  title      String
+  owner      User           @relation(fields: [ownerId], references: [id])
+  ownerId    String
+  lists      KanbanList[]
+  members    User[]         @relation("BoardMembers")
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+}
+
+model KanbanList {
+  id         String        @id @default(uuid())
+  title      String
+  board      KanbanBoard   @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  boardId    String
+  cards      KanbanCard[]
+  order      Int
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+}
+
+model KanbanCard {
+  id         String         @id @default(uuid())
+  title      String
+  description String?
+  list       KanbanList     @relation(fields: [listId], references: [id], onDelete: Cascade)
+  listId     String
+  dueDate    DateTime?
+  assignees  User[]         @relation("CardAssignees")
+  comments   KanbanComment[]
+  order      Int
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+}
+
+model KanbanComment {
+  id         String        @id @default(uuid())
+  content    String
+  card       KanbanCard    @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  cardId     String
+  author     User          @relation(fields: [authorId], references: [id])
+  authorId   String
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+}

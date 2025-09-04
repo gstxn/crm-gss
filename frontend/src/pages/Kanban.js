@@ -1,11 +1,11 @@
 import React from 'react';
-import Board from '../kanban/Board';
+import KanbanView from '../KanbanCRM/KanbanView';
 
 const Kanban = () => {
   return (
     <div className="kanban-page">
       <h1 className="text-2xl font-bold mb-4">Kanban Board</h1>
-      <Board />
+      <KanbanView />
     </div>
   );
 };
