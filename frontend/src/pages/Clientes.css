@@ -18,6 +18,12 @@
   position: relative;
 }
 
+.clientes-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
 .clientes-header h1 {
   margin: 0;
   color: #2c3e50;

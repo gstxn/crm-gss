@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { FaSearch, FaFilter, FaEllipsisV, FaPlus, FaMapMarkerAlt, FaUserTie, FaFileAlt } from 'react-icons/fa';
 import './Clientes.css';
+import ImportacaoBotoes from '../components/ImportacaoBotoes';
 
 const Clientes = () => {
   const [clientes, setClientes] = useState([]);
@@ -91,9 +92,12 @@ const Clientes = () => {
     <div className="clientes-container">
       <div className="clientes-header">
         <h1>Clientes</h1>
-        <Link to="/clientes/novo" className="btn-novo-cliente">
-          <FaPlus /> Novo Cliente
-        </Link>
+        <div className="clientes-header-actions">
+          <ImportacaoBotoes />
+          <Link to="/clientes/novo" className="btn-novo-cliente">
+            <FaPlus /> Novo Cliente
+          </Link>
+        </div>
       </div>
       
       <div className="acoes-container">

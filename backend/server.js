@@ -36,6 +36,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/medicos', require('./routes/medicoRoutes'));
 app.use('/api/clientes', require('./routes/clienteRoutes'));
+app.use('/api/clientes', require('./routes/importacaoRoutes')); // Rotas para importação e sincronização de clientes
 app.use('/api/oportunidades', require('./routes/oportunidadeRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 app.use('/api/tasks', require('./routes/taskRoutes'));
