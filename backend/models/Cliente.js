@@ -6,16 +6,41 @@ const clienteSchema = new mongoose.Schema({
     required: [true, 'Nome é obrigatório'],
     trim: true
   },
-  cnpj: {
+  email: {
     type: String,
-    required: [true, 'CNPJ é obrigatório'],
+    trim: true,
+    lowercase: true,
     unique: true,
+    sparse: true,
+    validate: {
+      validator: function(v) {
+        return v === null || v === '' || /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
+      },
+      message: props => `${props.value} não é um email válido!`
+    }
+  },
+  telefone: {
+    type: String,
+    trim: true
+  },
+  documento: {
+    type: String,
+    trim: true,
+    unique: true,
+    sparse: true
+  },
+  empresa: {
+    type: String,
+    trim: true
+  },
+  cargo: {
+    type: String,
     trim: true
   },
   tipo: {
     type: String,
     enum: ['Hospital', 'Clínica', 'Outro'],
-    required: [true, 'Tipo é obrigatório']
+    default: 'Outro'
   },
   endereco: {
     rua: String,
@@ -24,11 +49,12 @@ const clienteSchema = new mongoose.Schema({
     bairro: String,
     cidade: {
       type: String,
-      required: [true, 'Cidade é obrigatória']
+      trim: true
     },
     estado: {
       type: String,
-      required: [true, 'Estado é obrigatório']
+      trim: true,
+      uppercase: true
     },
     cep: String
   },
@@ -62,6 +88,15 @@ const clienteSchema = new mongoose.Schema({
     }
   ],
   observacoes: String,
+  tags: [{
+    type: String,
+    trim: true
+  }],
+  fonte: {
+    type: String,
+    enum: ['manual', 'importacao-manual', 'google-sheets'],
+    default: 'manual'
+  },
   criadoEm: {
     type: Date,
     default: Date.now
@@ -83,8 +118,12 @@ const clienteSchema = new mongoose.Schema({
 
 // Índices para melhorar a performance das consultas
 clienteSchema.index({ nome: 1 });
+clienteSchema.index({ email: 1 });
+clienteSchema.index({ documento: 1 });
+clienteSchema.index({ telefone: 1 });
 clienteSchema.index({ 'endereco.cidade': 1, 'endereco.estado': 1 });
 clienteSchema.index({ tipo: 1 });
+clienteSchema.index({ tags: 1 });
 
 const Cliente = mongoose.model('Cliente', clienteSchema);
 

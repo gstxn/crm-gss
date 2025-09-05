@@ -66,22 +66,6 @@ exports.updateList = asyncHandler(async (req, res) => {
   res.json(list);
 });
 
-// Move list within a board and reindex positions
-exports.moveList = asyncHandler(async (req, res) => {
-  const { position } = req.body;
-  if (typeof position !== 'number') {
-    return res.status(400).json({ message: 'Posição deve ser numérica' });
-  }
-  const list = await KanbanList.findById(req.params.id);
-  if (!list) return res.status(404).json({ message: 'Lista não encontrada' });
-
-  list.position = position;
-  await list.save();
-  await reindexBoardLists(list.board.toString());
-
-  res.json(list);
-});
-
 // ===== CARDS =====
 exports.createCard = asyncHandler(async (req, res) => {
   const { title, description, dueDate } = req.body;
@@ -157,18 +141,6 @@ async function reindexListCards(listId) {
     if (c.position !== idx) {
       c.position = idx;
       return c.save();
-    }
-    return Promise.resolve();
-  }));
-}
-
-// Helper: garante posições 0..n nas listas de um board
-async function reindexBoardLists(boardId) {
-  const lists = await KanbanList.find({ board: boardId }).sort('position');
-  await Promise.all(lists.map((l, idx) => {
-    if (l.position !== idx) {
-      l.position = idx;
-      return l.save();
     }
     return Promise.resolve();
   }));
