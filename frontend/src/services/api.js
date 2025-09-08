@@ -17,7 +17,15 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      // Verificar se o token não está vazio ou malformado
+      if (token.trim() && token !== 'null' && token !== 'undefined') {
+        config.headers.Authorization = `Bearer ${token}`;
+      } else {
+        // Remover token inválido
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+        return Promise.reject(new Error('Token inválido'));
+      }
     }
     return config;
   },
@@ -32,9 +40,12 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response?.status === 401) {
-      // Token expirado ou inválido
+    if (error.response?.status === 401 || 
+        error.message?.includes('jwt malformed') ||
+        error.message?.includes('Token inválido')) {
+      // Token expirado, inválido ou malformado
       localStorage.removeItem('token');
+      console.log('Token inválido removido, redirecionando para login');
       window.location.href = '/login';
     }
     return Promise.reject(error);

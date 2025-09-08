@@ -2,9 +2,143 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import {
+  Container,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  Box,
+  Button,
+  TextField,
+  InputAdornment,
+  Chip,
+  Avatar,
+  IconButton,
+  Menu,
+  MenuItem,
+  Pagination,
+  Paper,
+  Collapse,
+  FormControl,
+  InputLabel,
+  Select
+} from '@mui/material';
+import {
+  Add as AddIcon,
+  Search as SearchIcon,
+  FilterList as FilterIcon,
+  MoreVert as MoreVertIcon,
+  Person as PersonIcon,
+  Business as BusinessIcon,
+  CalendarToday as CalendarIcon,
+  LocationOn as LocationIcon,
+  ExpandMore as ExpandMoreIcon,
+  ExpandLess as ExpandLessIcon
+} from '@mui/icons-material';
 import Filters from '../components/Filters';
-import { FaPlus, FaSearch, FaFilter, FaEllipsisV, FaUserMd, FaBuilding, FaCalendarAlt, FaMapMarkerAlt } from 'react-icons/fa';
-import './Oportunidades.css';
+
+// Componente separado para o card da oportunidade
+const OportunidadeCard = ({ oportunidade }) => {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Aberta': return { bg: 'linear-gradient(45deg, #4caf50 30%, #81c784 90%)', color: 'white' };
+      case 'Em andamento': return { bg: 'linear-gradient(45deg, #ff9800 30%, #ffb74d 90%)', color: 'white' };
+      case 'Preenchida': return { bg: 'linear-gradient(45deg, #2196f3 30%, #64b5f6 90%)', color: 'white' };
+      case 'Cancelada': return { bg: 'linear-gradient(45deg, #f44336 30%, #e57373 90%)', color: 'white' };
+      default: return { bg: '#e0e0e0', color: 'black' };
+    }
+  };
+  
+  return (
+    <Grid item xs={12} sm={6} lg={4}>
+      <Card sx={{
+        borderRadius: 3,
+        boxShadow: 3,
+        transition: 'all 0.3s ease-in-out',
+        '&:hover': {
+          transform: 'translateY(-8px)',
+          boxShadow: 6
+        },
+        background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)'
+      }}>
+        <CardContent sx={{ p: 3 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#333', flexGrow: 1, mr: 1 }}>
+              {oportunidade.titulo}
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Chip
+                label={oportunidade.status}
+                sx={{
+                  background: getStatusColor(oportunidade.status).bg,
+                  color: getStatusColor(oportunidade.status).color,
+                  fontWeight: 'bold',
+                  fontSize: '0.75rem'
+                }}
+              />
+              <IconButton
+                size="small"
+                onClick={(e) => setAnchorEl(e.currentTarget)}
+              >
+                <MoreVertIcon />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={() => setAnchorEl(null)}
+              >
+                <MenuItem component={Link} to={`/oportunidades/${oportunidade._id}`}>
+                  Ver Detalhes
+                </MenuItem>
+                <MenuItem component={Link} to={`/oportunidades/${oportunidade._id}/editar`}>
+                  Editar
+                </MenuItem>
+              </Menu>
+            </Box>
+          </Box>
+          
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              <strong>Cliente:</strong> {oportunidade.cliente?.nome || 'N/A'}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              <strong>Especialidade:</strong> {oportunidade.especialidade}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              <strong>Local:</strong> {oportunidade.endereco?.cidade}, {oportunidade.endereco?.estado}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              <strong>Valor:</strong> R$ {oportunidade.valor?.toLocaleString('pt-BR') || '0'}
+            </Typography>
+          </Box>
+          
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="caption" color="text.secondary">
+              Criada em: {new Date(oportunidade.createdAt).toLocaleDateString('pt-BR')}
+            </Typography>
+            <Button
+              component={Link}
+              to={`/oportunidades/${oportunidade._id}`}
+              variant="contained"
+              size="small"
+              sx={{
+                background: 'linear-gradient(45deg, #667eea 30%, #764ba2 90%)',
+                '&:hover': {
+                  background: 'linear-gradient(45deg, #667eea 60%, #764ba2 100%)',
+                }
+              }}
+            >
+              Ver Detalhes
+            </Button>
+          </Box>
+        </CardContent>
+      </Card>
+    </Grid>
+  );
+};
 
 const Oportunidades = () => {
   const handleApplyFilters = (f) => {
@@ -130,100 +264,153 @@ const Oportunidades = () => {
   };
 
   return (
-    <div className="oportunidades-container">
-      <div className="oportunidades-header">
-        <h1>Oportunidades</h1>
-        <Link to="/oportunidades/nova" className="btn-nova-oportunidade">
-          <FaPlus /> Nova Oportunidade
-        </Link>
-      </div>
-
-      <div className="oportunidades-actions">
-        <form onSubmit={aplicarBusca} className="search-form">
-          <div className="search-input">
-            <input
-              type="text"
-              placeholder="Buscar oportunidades..."
-              value={busca}
-              onChange={(e) => setBusca(e.target.value)}
-            />
-            <button type="submit">
-              <FaSearch />
-            </button>
-          </div>
-        </form>
-
-        <button 
-          className="btn-filtrar" 
-          onClick={() => setMostrarFiltros(!mostrarFiltros)}
+    <Container maxWidth="xl" sx={{ py: 4 }}>
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        mb: 4,
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        borderRadius: 3,
+        p: 3,
+        color: 'white'
+      }}>
+        <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
+          Oportunidades
+        </Typography>
+        <Button
+          component={Link}
+          to="/oportunidades/nova"
+          variant="contained"
+          startIcon={<AddIcon />}
+          sx={{
+            background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+            boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+            '&:hover': {
+              background: 'linear-gradient(45deg, #FE6B8B 60%, #FF8E53 100%)',
+              transform: 'translateY(-2px)',
+              boxShadow: '0 6px 20px rgba(255, 105, 135, .4)'
+            }
+          }}
         >
-          <FaFilter /> Filtrar
-        </button>
-      </div>
+          Nova Oportunidade
+        </Button>
+      </Box>
+
+      <Paper sx={{ p: 3, mb: 3, borderRadius: 3, boxShadow: 3 }}>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+          <TextField
+            placeholder="Buscar oportunidades..."
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="action" />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ flexGrow: 1, minWidth: 300 }}
+            variant="outlined"
+          />
+          <Button
+            onClick={aplicarBusca}
+            variant="contained"
+            sx={{
+              background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+              '&:hover': {
+                background: 'linear-gradient(45deg, #2196F3 60%, #21CBF3 100%)',
+              }
+            }}
+          >
+            Buscar
+          </Button>
+          <Button
+            onClick={() => setMostrarFiltros(!mostrarFiltros)}
+            variant="outlined"
+            startIcon={mostrarFiltros ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            sx={{ borderColor: '#667eea', color: '#667eea' }}
+          >
+            Filtros
+          </Button>
+        </Box>
+      </Paper>
 
       {/* Filtros avançados */}
       <Filters onApply={handleApplyFilters} onReset={handleResetFilters} />
 
-      {mostrarFiltros && (
-        <div className="filtros-panel">
-          <form onSubmit={aplicarFiltros}>
-            <div className="filtros-grid">
-              <div className="filtro-grupo">
-                <label>Status</label>
-                <select 
-                  value={filtros.status} 
+      <Collapse in={mostrarFiltros}>
+        <Paper sx={{ p: 3, mb: 3, borderRadius: 3, boxShadow: 2, background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' }}>
+          <Typography variant="h6" sx={{ mb: 3, color: '#667eea', fontWeight: 'bold' }}>
+            Filtros Avançados
+          </Typography>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6} md={3}>
+              <FormControl fullWidth>
+                <InputLabel>Status</InputLabel>
+                <Select
+                  value={filtros.status}
+                  label="Status"
                   onChange={(e) => setFiltros({...filtros, status: e.target.value})}
                 >
-                  <option value="">Todos</option>
-                  <option value="Aberta">Aberta</option>
-                  <option value="Em andamento">Em andamento</option>
-                  <option value="Preenchida">Preenchida</option>
-                  <option value="Cancelada">Cancelada</option>
-                </select>
-              </div>
-
-              <div className="filtro-grupo">
-                <label>Especialidade</label>
-                <select 
-                  value={filtros.especialidade} 
+                  <MenuItem value="">Todos</MenuItem>
+                  <MenuItem value="Aberta">Aberta</MenuItem>
+                  <MenuItem value="Em andamento">Em andamento</MenuItem>
+                  <MenuItem value="Preenchida">Preenchida</MenuItem>
+                  <MenuItem value="Cancelada">Cancelada</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <FormControl fullWidth>
+                <InputLabel>Especialidade</InputLabel>
+                <Select
+                  value={filtros.especialidade}
+                  label="Especialidade"
                   onChange={(e) => setFiltros({...filtros, especialidade: e.target.value})}
                 >
-                  <option value="">Todas</option>
+                  <MenuItem value="">Todas</MenuItem>
                   {especialidades.map((esp, index) => (
-                    <option key={index} value={esp}>{esp}</option>
+                    <MenuItem key={index} value={esp}>{esp}</MenuItem>
                   ))}
-                </select>
-              </div>
-
-              <div className="filtro-grupo">
-                <label>Estado</label>
-                <select 
-                  value={filtros.estado} 
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <FormControl fullWidth>
+                <InputLabel>Estado</InputLabel>
+                <Select
+                  value={filtros.estado}
+                  label="Estado"
                   onChange={(e) => setFiltros({...filtros, estado: e.target.value})}
                 >
-                  <option value="">Todos</option>
+                  <MenuItem value="">Todos</MenuItem>
                   {estados.map((estado, index) => (
-                    <option key={index} value={estado}>{estado}</option>
+                    <MenuItem key={index} value={estado}>{estado}</MenuItem>
                   ))}
-                </select>
-              </div>
-
-              <div className="filtro-grupo">
-                <label>Cidade</label>
-                <select 
-                  value={filtros.cidade} 
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <FormControl fullWidth>
+                <InputLabel>Cidade</InputLabel>
+                <Select
+                  value={filtros.cidade}
+                  label="Cidade"
                   onChange={(e) => setFiltros({...filtros, cidade: e.target.value})}
                 >
-                  <option value="">Todas</option>
+                  <MenuItem value="">Todas</MenuItem>
                   {cidades.map((cidade, index) => (
-                    <option key={index} value={cidade}>{cidade}</option>
+                    <MenuItem key={index} value={cidade}>{cidade}</MenuItem>
                   ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="filtros-actions">
-              <button type="button" onClick={() => {
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+          <Box sx={{ display: 'flex', gap: 2, mt: 3, justifyContent: 'flex-end' }}>
+            <Button
+              variant="outlined"
+              onClick={() => {
                 setFiltros({
                   status: '',
                   especialidade: '',
@@ -231,107 +418,99 @@ const Oportunidades = () => {
                   estado: ''
                 });
                 setPaginacao(prev => ({ ...prev, currentPage: 1 }));
-              }}>
-                Limpar
-              </button>
-              <button type="submit">Aplicar</button>
-            </div>
-          </form>
-        </div>
-      )}
+              }}
+              sx={{ borderColor: '#667eea', color: '#667eea' }}
+            >
+              Limpar
+            </Button>
+            <Button
+              variant="contained"
+              onClick={aplicarFiltros}
+              sx={{
+                background: 'linear-gradient(45deg, #667eea 30%, #764ba2 90%)',
+                '&:hover': {
+                  background: 'linear-gradient(45deg, #667eea 60%, #764ba2 100%)',
+                }
+              }}
+            >
+              Aplicar
+            </Button>
+          </Box>
+        </Paper>
+      </Collapse>
 
       {loading ? (
-        <div className="loading-container">
-          <p>Carregando oportunidades...</p>
-        </div>
+        <Paper sx={{ p: 4, textAlign: 'center', borderRadius: 3 }}>
+          <Typography variant="h6" color="text.secondary">
+            Carregando oportunidades...
+          </Typography>
+        </Paper>
       ) : error ? (
-        <div className="error-container">
-          <p>{error}</p>
-          <button onClick={buscarOportunidades}>Tentar novamente</button>
-        </div>
+        <Paper sx={{ p: 4, textAlign: 'center', borderRadius: 3, background: 'linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%)' }}>
+          <Typography variant="h6" color="error" sx={{ mb: 2 }}>
+            {error}
+          </Typography>
+          <Button
+            variant="contained"
+            onClick={buscarOportunidades}
+            sx={{
+              background: 'linear-gradient(45deg, #f44336 30%, #e57373 90%)',
+              '&:hover': {
+                background: 'linear-gradient(45deg, #f44336 60%, #e57373 100%)',
+              }
+            }}
+          >
+            Tentar novamente
+          </Button>
+        </Paper>
       ) : oportunidades.length === 0 ? (
-        <div className="no-data-container">
-          <p>Nenhuma oportunidade encontrada.</p>
+        <Paper sx={{ p: 4, textAlign: 'center', borderRadius: 3, background: 'linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%)' }}>
+          <Typography variant="h6" color="text.secondary" sx={{ mb: 1 }}>
+            Nenhuma oportunidade encontrada.
+          </Typography>
           {Object.values(filtros).some(f => f !== '') && (
-            <p>Tente ajustar os filtros para ver mais resultados.</p>
+            <Typography variant="body2" color="text.secondary">
+              Tente ajustar os filtros para ver mais resultados.
+            </Typography>
           )}
-        </div>
+        </Paper>
       ) : (
         <>
-          <div className="oportunidades-list">
+          <Grid container spacing={3}>
             {oportunidades.map((oportunidade) => (
-              <div key={oportunidade._id} className="oportunidade-card">
-                <div className="oportunidade-header">
-                  <h3>{oportunidade.titulo}</h3>
-                  <div className="oportunidade-actions">
-                    <div className={`oportunidade-status ${getStatusClass(oportunidade.status)}`}>
-                      {oportunidade.status}
-                    </div>
-                    <div className="oportunidade-menu">
-                      <FaEllipsisV />
-                      <div className="oportunidade-menu-dropdown">
-                        <Link to={`/oportunidades/${oportunidade._id}`}>Ver detalhes</Link>
-                        <Link to={`/oportunidades/${oportunidade._id}/editar`}>Editar</Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="oportunidade-info">
-                  <div className="oportunidade-info-item">
-                    <FaUserMd />
-                    <span>{oportunidade.especialidade}</span>
-                  </div>
-                  <div className="oportunidade-info-item">
-                    <FaBuilding />
-                    <span>{oportunidade.cliente?.nome || 'Cliente não disponível'}</span>
-                  </div>
-                  <div className="oportunidade-info-item">
-                    <FaCalendarAlt />
-                    <span>Início: {formatarData(oportunidade.dataInicio)}</span>
-                  </div>
-                  <div className="oportunidade-info-item">
-                    <FaMapMarkerAlt />
-                    <span>{oportunidade.local?.cidade}, {oportunidade.local?.estado}</span>
-                  </div>
-                </div>
-                
-                <div className="oportunidade-footer">
-                  <Link to={`/oportunidades/${oportunidade._id}`} className="btn-detalhes">
-                    Ver detalhes
-                  </Link>
-                  <div className="oportunidade-medicos">
-                    {oportunidade.medicosIndicados?.length > 0 ? (
-                      <span>{oportunidade.medicosIndicados.length} médico(s) indicado(s)</span>
-                    ) : (
-                      <span>Nenhum médico indicado</span>
-                    )}
-                  </div>
-                </div>
-              </div>
+              <OportunidadeCard key={oportunidade._id} oportunidade={oportunidade} />
             ))}
-          </div>
+          </Grid>
           
-          <div className="paginacao">
-            <button 
-              onClick={() => mudarPagina(paginacao.currentPage - 1)}
-              disabled={paginacao.currentPage === 1}
-            >
-              Anterior
-            </button>
-            <span>
-              Página {paginacao.currentPage} de {paginacao.totalPages} ({paginacao.total} resultados)
-            </span>
-            <button 
-              onClick={() => mudarPagina(paginacao.currentPage + 1)}
-              disabled={paginacao.currentPage === paginacao.totalPages}
-            >
-              Próxima
-            </button>
-          </div>
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 4 }}>
+            <Paper sx={{ p: 2, borderRadius: 3, background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Pagination
+                  count={paginacao.totalPages}
+                  page={paginacao.currentPage}
+                  onChange={(event, page) => mudarPagina(page)}
+                  color="primary"
+                  sx={{
+                    '& .MuiPaginationItem-root': {
+                      '&.Mui-selected': {
+                        background: 'linear-gradient(45deg, #667eea 30%, #764ba2 90%)',
+                        color: 'white',
+                        '&:hover': {
+                          background: 'linear-gradient(45deg, #667eea 60%, #764ba2 100%)',
+                        }
+                      }
+                    }
+                  }}
+                />
+                <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }}>
+                  {paginacao.total} resultados
+                </Typography>
+              </Box>
+            </Paper>
+          </Box>
         </>
       )}
-    </div>
+    </Container>
   );
 };
 

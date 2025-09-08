@@ -2,28 +2,6 @@ const express = require('express');
 const router = express.Router();
 const medicoDisparoController = require('../controllers/medicoDisparoController');
 const { authenticateToken, authorizeDisparo } = require('../middleware/auth');
-const multer = require('multer');
-
-// Configuração do multer para upload de arquivos
-const upload = multer({ 
-  dest: 'uploads/',
-  limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB
-  },
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = [
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'application/vnd.ms-excel',
-      'text/csv'
-    ];
-    
-    if (allowedTypes.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(new Error('Tipo de arquivo não suportado. Use XLSX, XLS ou CSV.'));
-    }
-  }
-});
 
 // Rotas com diferentes níveis de autorização
 

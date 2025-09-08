@@ -1,28 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaBriefcase, FaUserMd, FaHospital, FaBell, FaChartBar, FaCalendarAlt, FaExclamationTriangle, FaCheckCircle, FaChartLine, FaRegClock, FaUsers, FaRegCalendarCheck } from 'react-icons/fa';
+import {
+  Container,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  Box,
+  Avatar,
+  LinearProgress,
+  Chip,
+  Paper,
+  IconButton,
+  Fade,
+  Grow
+} from '@mui/material';
+import {
+  TrendingUp,
+  People,
+  LocalHospital,
+  Business,
+  Analytics,
+  Notifications,
+  MoreVert,
+  ArrowUpward,
+  ArrowDownward,
+  ArrowForward,
+  Assignment
+} from '@mui/icons-material';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import './Dashboard.css';
 
 const Dashboard = () => {
+  const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     oportunidades: 0,
     medicos: 0,
     clientes: 0,
-    tarefasConcluidas: 0,
-    taxaConversao: 0,
+    tarefasConcluidas: 0
   });
-
   const [recentActivities, setRecentActivities] = useState([]);
-  const [pendingTasks, setPendingTasks] = useState([]);
-  const [upcomingEvents, setUpcomingEvents] = useState([]);
-  const [performanceData, setPerformanceData] = useState([]);
-
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [statusData, setStatusData] = useState([]);
   const [specialtyData, setSpecialtyData] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -44,43 +64,17 @@ const Dashboard = () => {
         // Buscar estatísticas
         const statsResponse = await axios.get('/api/dashboard/stats', config);
         setStats(statsResponse.data.stats);
-        setStatusData(statsResponse.data.oportunidadesPorStatus);
-        setSpecialtyData(statsResponse.data.medicosPorEspecialidade);
+        setStatusData(statsResponse.data.oportunidadesPorStatus || []);
+        setSpecialtyData(statsResponse.data.medicosPorEspecialidade || []);
 
         // Buscar atividades recentes
         const activitiesResponse = await axios.get('/api/dashboard/activities', config);
         setRecentActivities(activitiesResponse.data.map(activity => ({
           ...activity,
-          time: formatTimeAgo(new Date(activity.time))
+          time: formatTimeAgo(new Date(activity.time)),
+          avatar: getActivityIcon(activity.type),
+          description: activity.subtitle
         })));
-
-        // Buscar tarefas pendentes
-        const tasksResponse = await axios.get('/api/dashboard/tasks', config);
-        setPendingTasks(tasksResponse.data);
-        
-        // Simular dados de eventos próximos
-
-        // Resetar eventos próximos para coleção vazia em produção
-        setUpcomingEvents([]);
-        
-        // Simular dados de desempenho
-        setPerformanceData([
-          { month: 'Jan', value: 65 },
-          { month: 'Fev', value: 59 },
-          { month: 'Mar', value: 80 },
-          { month: 'Abr', value: 81 },
-          { month: 'Mai', value: 56 },
-          { month: 'Jun', value: 55 },
-        ]);
-        
-        // Simular estatísticas adicionais
-
-        // Resetar estatísticas adicionais para zero em produção
-        setStats(prev => ({
-          ...prev,
-          tarefasConcluidas: 0,
-          taxaConversao: 0,
-        }));
 
         setLoading(false);
       } catch (err) {
@@ -93,6 +87,24 @@ const Dashboard = () => {
 
     fetchDashboardData();
   }, []);
+
+  // Função para obter ícone da atividade
+  const getActivityIcon = (type) => {
+    switch(type) {
+      case 'oportunidade':
+        return '💼';
+      case 'medico':
+        return '👨‍⚕️';
+      case 'cliente':
+        return '👤';
+      case 'task':
+        return '✅';
+      case 'audit':
+        return '📋';
+      default:
+        return '📌';
+    }
+  };
 
   // Função para formatar tempo relativo
   const formatTimeAgo = (date) => {
@@ -114,226 +126,317 @@ const Dashboard = () => {
     return `${diffInMonths} meses atrás`;
   };
 
-  const getActivityIcon = (type) => {
-    switch (type) {
-      case 'oportunidade':
-        return <FaBriefcase className="activity-icon opportunity" />;
-      case 'medico':
-        return <FaUserMd className="activity-icon doctor" />;
-      case 'cliente':
-        return <FaHospital className="activity-icon client" />;
-      default:
-        return <FaBell className="activity-icon" />;
+  // Métricas baseadas nos dados reais
+  const metrics = [
+    {
+      title: 'Oportunidades',
+      value: (stats.oportunidades || 0).toString(),
+      change: '+0%',
+      trend: 'up',
+      icon: TrendingUp,
+      color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      bgColor: 'rgba(102, 126, 234, 0.1)',
+      link: '/oportunidades'
+    },
+    {
+      title: 'Médicos',
+      value: (stats.medicos || 0).toString(),
+      change: '+0%',
+      trend: 'up',
+      icon: LocalHospital,
+      color: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+      bgColor: 'rgba(240, 147, 251, 0.1)',
+      link: '/medicos'
+    },
+    {
+      title: 'Clientes',
+      value: (stats.clientes || 0).toString(),
+      change: '+0%',
+      trend: 'up',
+      icon: People,
+      color: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+      bgColor: 'rgba(79, 172, 254, 0.1)',
+      link: '/clientes'
+    },
+    {
+      title: 'Tarefas Concluídas',
+      value: (stats.tarefasConcluidas || 0).toString(),
+      change: '+0%',
+      trend: 'up',
+      icon: Assignment,
+      color: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+      bgColor: 'rgba(67, 233, 123, 0.1)',
+      link: '/tarefas'
     }
-  };
+  ];
 
-  const getPriorityClass = (priority) => {
-    switch (priority) {
-      case 'high':
-        return 'priority-high';
-      case 'medium':
-        return 'priority-medium';
-      case 'low':
-        return 'priority-low';
-      default:
-        return '';
-    }
-  };
+  // Dados do gráfico baseados nos status das oportunidades
+  const chartData = statusData.map((item, index) => ({
+    month: item._id || `Status ${index + 1}`,
+    value: Math.min(((item.count || 0) / Math.max(stats.oportunidades || 1, 1)) * 100, 100),
+    color: ['#667eea', '#f093fb', '#4facfe', '#43e97b', '#ff6b6b', '#feca57'][index % 6]
+  }));
 
   if (loading) {
-    return <div className="loading-container">Carregando dados do dashboard...</div>;
-  }
-
-  if (error) {
-    return <div className="error-container">{error}</div>;
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+        <Typography>Carregando...</Typography>
+      </Box>
+    );
   }
 
   return (
-    <div className="dashboard-container">
-      <h2 className="page-title">Dashboard</h2>
-      
-      <div className="stats-container">
-        <Link to="/oportunidades" className="stat-card-link">
-          <div className="stat-card">
-            <div className="stat-icon opportunity">
-              <FaBriefcase />
-            </div>
-            <div className="stat-info">
-              <h3>{stats.oportunidades}</h3>
-              <p>Oportunidades</p>
-            </div>
-          </div>
-        </Link>
-        
-        <Link to="/medicos" className="stat-card-link">
-          <div className="stat-card">
-            <div className="stat-icon doctor">
-              <FaUserMd />
-            </div>
-            <div className="stat-info">
-              <h3>{stats.medicos}</h3>
-              <p>Médicos</p>
-            </div>
-          </div>
-        </Link>
-        
-        <Link to="/clientes" className="stat-card-link">
-          <div className="stat-card">
-            <div className="stat-icon client">
-              <FaHospital />
-            </div>
-            <div className="stat-info">
-              <h3>{stats.clientes}</h3>
-              <p>Clientes</p>
-            </div>
-          </div>
-        </Link>
+    <Box sx={{ 
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+      py: 4
+    }}>
+      <Container maxWidth="xl">
+        {/* Header Moderno */}
+        <Fade in timeout={800}>
+          <Box sx={{ mb: 6 }}>
+            <Box sx={{
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              borderRadius: 4,
+              p: 4,
+              color: 'white',
+              position: 'relative',
+              overflow: 'hidden',
+              boxShadow: '0 20px 40px rgba(102, 126, 234, 0.3)'
+            }}>
+              <Box sx={{
+                position: 'absolute',
+                top: -50,
+                right: -50,
+                width: 200,
+                height: 200,
+                borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)'
+              }} />
+              <Box sx={{
+                position: 'absolute',
+                bottom: -30,
+                left: -30,
+                width: 150,
+                height: 150,
+                borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.05)',
+                backdropFilter: 'blur(5px)'
+              }} />
+              <Box sx={{ position: 'relative', zIndex: 1 }}>
+                <Typography variant="h3" sx={{ fontWeight: 800, mb: 1 }}>
+                  Dashboard Executivo
+                </Typography>
+                <Typography variant="h6" sx={{ opacity: 0.9, fontWeight: 300 }}>
+                  Visão completa do seu negócio em tempo real
+                </Typography>
+                <Box sx={{ mt: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Chip 
+                    label="Atualizado agora" 
+                    sx={{ 
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      color: 'white',
+                      backdropFilter: 'blur(10px)'
+                    }} 
+                  />
+                  <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                    Última sincronização: {new Date().toLocaleTimeString()}
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+        </Fade>
 
-        <div className="stat-card">
-          <div className="stat-icon success">
-            <FaCheckCircle />
-          </div>
-          <div className="stat-info">
-            <h3>{stats.tarefasConcluidas}</h3>
-            <p>Tarefas Concluídas</p>
-          </div>
-        </div>
+        {/* Cards de Métricas Principais */}
+        <Grid container spacing={4} sx={{ mb: 6, justifyContent: 'center' }}>
+          {metrics.map((metric, index) => (
+            <Grid item xs={12} sm={6} lg={3} key={metric.title}>
+              <Grow in timeout={1000 + index * 200}>
+                <Card 
+                  component={metric.link ? 'div' : 'div'}
+                  onClick={metric.link ? () => window.location.href = metric.link : undefined}
+                  sx={{
+                    borderRadius: 4,
+                    background: 'rgba(255, 255, 255, 0.9)',
+                    backdropFilter: 'blur(20px)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    cursor: metric.link ? 'pointer' : 'default',
+                    '&:hover': {
+                      transform: 'translateY(-8px)',
+                      boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15)'
+                    }
+                  }}>
+                  <CardContent sx={{ p: 4 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 3 }}>
+                      <Box sx={{
+                        width: 60,
+                        height: 60,
+                        borderRadius: 3,
+                        background: metric.bgColor,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}>
+                        <metric.icon sx={{ fontSize: 28, background: metric.color, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }} />
+                      </Box>
+                      {metric.link && (
+                        <IconButton size="small" sx={{ color: '#64748b' }}>
+                          <ArrowForward />
+                        </IconButton>
+                      )}
+                    </Box>
+                    <Typography variant="h4" sx={{ fontWeight: 700, color: '#1e293b', mb: 1 }}>
+                      {metric.value}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: '#64748b', mb: 2 }}>
+                      {metric.title}
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      {metric.trend === 'up' ? (
+                        <ArrowUpward sx={{ fontSize: 16, color: '#10b981' }} />
+                      ) : (
+                        <ArrowDownward sx={{ fontSize: 16, color: '#ef4444' }} />
+                      )}
+                      <Typography 
+                        variant="caption" 
+                        sx={{ 
+                          color: metric.trend === 'up' ? '#10b981' : '#ef4444',
+                          fontWeight: 600
+                        }}
+                      >
+                        {metric.change}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#64748b' }}>
+                        vs mês anterior
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grow>
+            </Grid>
+          ))}
+        </Grid>
 
-        <div className="stat-card">
-          <div className="stat-icon conversion">
-            <FaChartLine />
-          </div>
-          <div className="stat-info">
-            <h3>{stats.taxaConversao}%</h3>
-            <p>Taxa de Conversão</p>
-          </div>
-        </div>
-      </div>
-      
-      <div className="dashboard-charts">
-        <div className="chart-card">
-          <h3 className="card-title"><FaChartBar /> Oportunidades por Status</h3>
-          <div className="status-chart">
-            {statusData.map((item) => (
-              <div key={item._id} className="status-bar">
-                <div className="status-label">{item._id}</div>
-                <div className="status-value" style={{ width: `${(item.count / stats.oportunidades) * 100}%` }}>
-                  {item.count}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        
-        <div className="chart-card">
-          <h3 className="card-title"><FaUserMd /> Médicos por Especialidade</h3>
-          <div className="specialty-chart">
-            {specialtyData.map((item) => (
-              <div key={item._id} className="specialty-item">
-                <div className="specialty-name">{item._id}</div>
-                <div className="specialty-count">{item.count}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-      
-      <div className="dashboard-charts">
-        <div className="chart-card performance-chart">
-          <h3 className="card-title"><FaChartLine /> Panorama Mensal</h3>
-          <div className="performance-graph">
-            <div className="graph-container">
-              {performanceData.map((item, index) => (
-                <div key={index} className="graph-bar-container">
-                  <div 
-                    className="graph-bar" 
-                    style={{ height: `${item.value}%` }}
-                    data-value={`${item.value}%`}
-                  ></div>
-                  <div className="graph-label">{item.month}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
+        {/* Seção de Analytics */}
+        <Grid container spacing={4} sx={{ mb: 6, justifyContent: 'center' }}>
+          <Grid item xs={12} lg={8}>
+            <Fade in timeout={1200}>
+              <Paper sx={{
+                borderRadius: 4,
+                background: 'rgba(255, 255, 255, 0.9)',
+                backdropFilter: 'blur(20px)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                p: 4,
+                height: 400
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 4 }}>
+                  <Box>
+                    <Typography variant="h5" sx={{ fontWeight: 700, color: '#1e293b', mb: 1 }}>
+                      Performance Mensal
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: '#64748b' }}>
+                      Evolução das métricas principais
+                    </Typography>
+                  </Box>
+                  <IconButton>
+                    <Analytics sx={{ color: '#667eea' }} />
+                  </IconButton>
+                </Box>
+                
+                <Box sx={{ display: 'flex', alignItems: 'end', justifyContent: 'space-between', height: 250, px: 2 }}>
+                  {chartData.map((item, index) => (
+                    <Box key={index} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+                      <Box 
+                        sx={{
+                          width: 40,
+                          height: `${item.value}%`,
+                          background: `linear-gradient(135deg, ${item.color} 0%, ${item.color}80 100%)`,
+                          borderRadius: 2,
+                          mb: 2,
+                          minHeight: 20,
+                          boxShadow: `0 4px 20px ${item.color}40`,
+                          transition: 'all 0.3s ease',
+                          '&:hover': {
+                            transform: 'scale(1.05)'
+                          }
+                        }}
+                      />
+                      <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600 }}>
+                        {item.month}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+              </Paper>
+            </Fade>
+          </Grid>
 
-      <div className="dashboard-content">
-        <div className="dashboard-column">
-          <div className="card">
-            <h3 className="card-title"><FaCalendarAlt /> Atividades Recentes</h3>
-            {recentActivities.length > 0 ? (
-              <div className="activities-list">
-                {recentActivities.map((activity) => (
-                  <div key={activity.id} className="activity-item">
-                    {getActivityIcon(activity.type)}
-                    <div className="activity-details">
-                      <p className="activity-title">{activity.title}</p>
-                      <p className="activity-subtitle">{activity.subtitle}</p>
-                      <span className="activity-time">{activity.time}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="no-data-message">Nenhuma atividade recente encontrada.</p>
-            )}
-          </div>
-        </div>
-        
-        <div className="dashboard-column">
-          <div className="card">
-            <h3 className="card-title"><FaExclamationTriangle /> Tarefas Pendentes</h3>
-            {pendingTasks.length > 0 ? (
-              <div className="tasks-list">
-                {pendingTasks.map((task) => (
-                  <div key={task.id} className="task-item">
-                    <div className="task-details">
-                      <p className="task-title">{task.title}</p>
-                      <div className="task-meta">
-                        <span className={`task-priority ${getPriorityClass(task.priority)}`}>
-                          {task.priority === 'high' ? 'Alta' : task.priority === 'medium' ? 'Média' : 'Baixa'}
-                        </span>
-                        <span className="task-due-date"><FaRegClock /> {task.dueDate}</span>
-                      </div>
-                    </div>
-                    <Link to={task.type === 'task' ? '/tarefas-pendentes' : `/oportunidades/${task.relatedId}`} className="btn btn-sm">Ver</Link>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="no-data-message">Nenhuma tarefa pendente encontrada.</p>
-            )}
-          </div>
-        </div>
+          <Grid item xs={12} lg={4}>
+            <Fade in timeout={1400}>
+              <Paper sx={{
+                borderRadius: 4,
+                background: 'rgba(255, 255, 255, 0.9)',
+                backdropFilter: 'blur(20px)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                p: 4,
+                height: 400
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 4 }}>
+                  <Box>
+                    <Typography variant="h5" sx={{ fontWeight: 700, color: '#1e293b', mb: 1 }}>
+                      Atividades Recentes
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: '#64748b' }}>
+                      Últimas atualizações
+                    </Typography>
+                  </Box>
+                  <IconButton>
+                    <Notifications sx={{ color: '#f093fb' }} />
+                  </IconButton>
+                </Box>
 
-        <div className="dashboard-column">
-          <div className="card">
-            <h3 className="card-title"><FaRegCalendarCheck /> Próximos Eventos</h3>
-            {upcomingEvents.length > 0 ? (
-              <div className="events-list">
-                {upcomingEvents.map((event) => (
-                  <div key={event.id} className="event-item">
-                    <div className="event-date">
-                      <div className="event-day">{event.date.split('-')[2]}</div>
-                      <div className="event-month">{['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'][parseInt(event.date.split('-')[1]) - 1]}</div>
-                    </div>
-                    <div className="event-details">
-                      <p className="event-title">{event.title}</p>
-                      <div className="event-type">
-                        {event.type === 'meeting' ? 'Reunião' : event.type === 'presentation' ? 'Apresentação' : 'Treinamento'}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="no-data-message">Nenhum evento próximo encontrado.</p>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
+                <Box sx={{ maxHeight: 280, overflow: 'auto' }}>
+                  {recentActivities.map((activity, index) => (
+                    <Box key={activity.id} sx={{ mb: 3, pb: 3, borderBottom: index < recentActivities.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 3 }}>
+                        <Avatar sx={{
+                          width: 48,
+                          height: 48,
+                          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                          fontSize: '0.875rem',
+                          fontWeight: 600
+                        }}>
+                          {activity.avatar}
+                        </Avatar>
+                        <Box sx={{ flex: 1, minWidth: 0 }}>
+                          <Typography variant="body2" sx={{ fontWeight: 600, color: '#1e293b', mb: 0.5 }}>
+                            {activity.title}
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: '#64748b', display: 'block', mb: 1 }}>
+                            {activity.description}
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: '#94a3b8' }}>
+                            {activity.time}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Box>
+                  ))}
+                </Box>
+              </Paper>
+            </Fade>
+          </Grid>
+        </Grid>
+
+
+      </Container>
+    </Box>
   );
 };
 

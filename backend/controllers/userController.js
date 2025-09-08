@@ -59,6 +59,11 @@ const loginUser = async (req, res) => {
   try {
     const { username, password } = req.body;
 
+    // Validar se username e password foram fornecidos
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Username e password são obrigatórios' });
+    }
+
     // Verificar se o username é email ou CPF
     const isEmail = username.includes('@');
     const query = isEmail ? { email: username } : { cpf: username };

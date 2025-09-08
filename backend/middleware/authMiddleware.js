@@ -21,17 +21,17 @@ const protect = async (req, res, next) => {
       // Obter o usuário do token (sem a senha)
       req.user = await User.findById(decoded.id).select('-senha');
 
+      if (!req.user) {
+        return res.status(401).json({ error: 'Usuário não encontrado' });
+      }
+
       next();
     } catch (error) {
-      console.error(error);
-      res.status(401);
-      throw new Error('Não autorizado, token inválido');
+      console.error('Erro na autenticação:', error);
+      return res.status(401).json({ error: 'Não autorizado, token inválido' });
     }
-  }
-
-  if (!token) {
-    res.status(401);
-    throw new Error('Não autorizado, token não encontrado');
+  } else {
+    return res.status(401).json({ error: 'Não autorizado, token não encontrado' });
   }
 };
 

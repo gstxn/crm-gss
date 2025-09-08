@@ -3,6 +3,7 @@ const Medico = require('../models/Medico');
 const Cliente = require('../models/Cliente');
 const User = require('../models/User');
 const Task = require('../models/Task');
+const AuditLog = require('../models/admin/AuditLog');
 
 // @desc    Obter estatísticas para o dashboard
 // @route   GET /api/dashboard/stats
@@ -46,52 +47,126 @@ const getDashboardStats = async (req, res) => {
 // @access  Private
 const getRecentActivities = async (req, res) => {
   try {
-    // Obter oportunidades recentes
+    const activities = [];
+
+    // 1. Obter logs de auditoria recentes (todas as ações do sistema)
+    const auditLogs = await AuditLog.find()
+      .sort({ timestamp: -1 })
+      .limit(10)
+      .populate('user', 'nome email')
+      .select('action entity entityId details timestamp user');
+
+    auditLogs.forEach(log => {
+      let title = '';
+      let subtitle = '';
+      
+      switch(log.action) {
+        case 'CREATE':
+          title = `${log.entity} criado`;
+          subtitle = `Por: ${log.user ? log.user.nome : 'Sistema'}`;
+          break;
+        case 'UPDATE':
+          title = `${log.entity} atualizado`;
+          subtitle = `Por: ${log.user ? log.user.nome : 'Sistema'}`;
+          break;
+        case 'DELETE':
+          title = `${log.entity} removido`;
+          subtitle = `Por: ${log.user ? log.user.nome : 'Sistema'}`;
+          break;
+        case 'LOGIN':
+          title = 'Login realizado';
+          subtitle = `Usuário: ${log.user ? log.user.nome : 'N/A'}`;
+          break;
+        default:
+          title = `${log.action} - ${log.entity}`;
+          subtitle = `Por: ${log.user ? log.user.nome : 'Sistema'}`;
+      }
+
+      activities.push({
+        id: log._id,
+        type: 'audit',
+        title,
+        subtitle,
+        time: log.timestamp,
+        action: log.action,
+        entity: log.entity
+      });
+    });
+
+    // 2. Obter tarefas recentes
+    const recentTasks = await Task.find()
+      .sort({ criadoEm: -1 })
+      .limit(5)
+      .populate('criadoPor', 'nome')
+      .select('titulo status criadoEm criadoPor');
+
+    recentTasks.forEach(task => {
+      activities.push({
+        id: task._id,
+        type: 'task',
+        title: `Tarefa: ${task.titulo}`,
+        subtitle: `Status: ${task.status === 'pending' ? 'Pendente' : 'Concluída'} - Por: ${task.criadoPor ? task.criadoPor.nome : 'N/A'}`,
+        time: task.criadoEm
+      });
+    });
+
+    // 3. Obter oportunidades recentes
     const recentOportunidades = await Oportunidade.find()
       .sort({ criadoEm: -1 })
-      .limit(3)
-      .select('titulo status cliente criadoEm')
+      .limit(5)
+      .select('titulo status cliente criadoEm atualizadoEm')
       .populate('cliente', 'nome');
 
-    // Obter médicos recentes
-    const recentMedicos = await Medico.find()
-      .sort({ criadoEm: -1 })
-      .limit(3)
-      .select('nome especialidade criadoEm');
-
-    // Obter clientes recentes
-    const recentClientes = await Cliente.find()
-      .sort({ criadoEm: -1 })
-      .limit(3)
-      .select('nome tipo criadoEm');
-
-    // Combinar e ordenar por data
-    const activities = [
-      ...recentOportunidades.map(o => ({
+    recentOportunidades.forEach(o => {
+      activities.push({
         id: o._id,
         type: 'oportunidade',
-        title: o.titulo,
-        subtitle: `Cliente: ${o.cliente ? o.cliente.nome : 'N/A'}`,
-        time: o.criadoEm
-      })),
-      ...recentMedicos.map(m => ({
+        title: `Oportunidade: ${o.titulo}`,
+        subtitle: `Cliente: ${o.cliente ? o.cliente.nome : 'N/A'} - Status: ${o.status}`,
+        time: o.atualizadoEm || o.criadoEm
+      });
+    });
+
+    // 4. Obter médicos recentes
+    const recentMedicos = await Medico.find()
+      .sort({ criadoEm: -1 })
+      .limit(5)
+      .select('nome especialidade criadoEm atualizadoEm');
+
+    recentMedicos.forEach(m => {
+      activities.push({
         id: m._id,
         type: 'medico',
-        title: m.nome,
+        title: `Médico: ${m.nome}`,
         subtitle: `Especialidade: ${m.especialidade}`,
-        time: m.criadoEm
-      })),
-      ...recentClientes.map(c => ({
+        time: m.atualizadoEm || m.criadoEm
+      });
+    });
+
+    // 5. Obter clientes recentes
+    const recentClientes = await Cliente.find()
+      .sort({ criadoEm: -1 })
+      .limit(5)
+      .select('nome tipo criadoEm atualizadoEm');
+
+    recentClientes.forEach(c => {
+      activities.push({
         id: c._id,
         type: 'cliente',
-        title: c.nome,
+        title: `Cliente: ${c.nome}`,
         subtitle: `Tipo: ${c.tipo}`,
-        time: c.criadoEm
-      }))
-    ].sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 5);
+        time: c.atualizadoEm || c.criadoEm
+      });
+    });
 
-    res.json(activities);
+    // Ordenar todas as atividades por data (mais recentes primeiro) e limitar a 15
+    const sortedActivities = activities
+      .sort((a, b) => new Date(b.time) - new Date(a.time))
+      .slice(0, 15);
+
+    res.json(sortedActivities);
   } catch (error) {
+    console.error('Erro ao buscar atividades recentes:', error);
     res.status(500).json({ message: error.message });
   }
 };

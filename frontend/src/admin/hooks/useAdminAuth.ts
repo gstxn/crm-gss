@@ -18,7 +18,7 @@ type UseAdminAuthReturn = {
   adminIsAuthenticated: boolean;
 };
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
 
 export const useAdminAuth = (): UseAdminAuthReturn => {
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);

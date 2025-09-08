@@ -97,24 +97,83 @@ router.get('/contatos', async (req, res) => {
 // GET /api/disparo/especialidades - Listar especialidades disponíveis
 router.get('/especialidades', async (req, res) => {
   try {
-    const especialidades = await MedicoDisparo.aggregate([
+    // Lista completa de especialidades médicas
+    const todasEspecialidades = [
+      { id: '1', nome: 'Alergia e Imunologia' },
+      { id: '2', nome: 'Anestesiologia' },
+      { id: '3', nome: 'Angiologia' },
+      { id: '4', nome: 'Cardiologia' },
+      { id: '5', nome: 'Cirurgia Cardiovascular' },
+      { id: '6', nome: 'Cirurgia da Mão' },
+      { id: '7', nome: 'Cirurgia de Cabeça e Pescoço' },
+      { id: '8', nome: 'Cirurgia do Aparelho Digestivo' },
+      { id: '9', nome: 'Cirurgia Geral' },
+      { id: '10', nome: 'Cirurgia Oncológica' },
+      { id: '11', nome: 'Cirurgia Pediátrica' },
+      { id: '12', nome: 'Cirurgia Plástica' },
+      { id: '13', nome: 'Cirurgia Torácica' },
+      { id: '14', nome: 'Cirurgia Vascular' },
+      { id: '15', nome: 'Clínica Médica' },
+      { id: '16', nome: 'Coloproctologia' },
+      { id: '17', nome: 'Dermatologia' },
+      { id: '18', nome: 'Endocrinologia e Metabologia' },
+      { id: '19', nome: 'Endoscopia' },
+      { id: '20', nome: 'Gastroenterologia' },
+      { id: '21', nome: 'Genética Médica' },
+      { id: '22', nome: 'Geriatria' },
+      { id: '23', nome: 'Ginecologia e Obstetrícia' },
+      { id: '24', nome: 'Hematologia e Hemoterapia' },
+      { id: '25', nome: 'Homeopatia' },
+      { id: '26', nome: 'Infectologia' },
+      { id: '27', nome: 'Medicina de Emergência' },
+      { id: '28', nome: 'Medicina de Família e Comunidade' },
+      { id: '29', nome: 'Medicina do Trabalho' },
+      { id: '30', nome: 'Medicina Esportiva' },
+      { id: '31', nome: 'Medicina Física e Reabilitação' },
+      { id: '32', nome: 'Medicina Intensiva' },
+      { id: '33', nome: 'Medicina Legal e Perícia Médica' },
+      { id: '34', nome: 'Medicina Nuclear' },
+      { id: '35', nome: 'Nefrologia' },
+      { id: '36', nome: 'Neurocirurgia' },
+      { id: '37', nome: 'Neurologia' },
+      { id: '38', nome: 'Nutrologia' },
+      { id: '39', nome: 'Oftalmologia' },
+      { id: '40', nome: 'Oncologia Clínica' },
+      { id: '41', nome: 'Ortopedia e Traumatologia' },
+      { id: '42', nome: 'Otorrinolaringologia' },
+      { id: '43', nome: 'Patologia' },
+      { id: '44', nome: 'Patologia Clínica / Medicina Laboratorial' },
+      { id: '45', nome: 'Pediatria' },
+      { id: '46', nome: 'Pneumologia' },
+      { id: '47', nome: 'Psiquiatria' },
+      { id: '48', nome: 'Radiologia e Diagnóstico por Imagem' },
+      { id: '49', nome: 'Radioterapia' },
+      { id: '50', nome: 'Reumatologia' },
+      { id: '51', nome: 'Urologia' }
+    ];
+
+    // Obter contagem de médicos por especialidade (opcional)
+    const especialidadesComContagem = await MedicoDisparo.aggregate([
       { $match: { permitido_envio: true } },
       { $unwind: '$especialidades' },
       { $group: { 
         _id: '$especialidades', 
         count: { $sum: 1 }
-      }},
-      { $sort: { count: -1 } },
-      { $project: {
-        especialidade: '$_id',
-        total_contatos: '$count',
-        _id: 0
       }}
     ]);
 
+    // Mapear especialidades com contagem
+    const especialidadesComInfo = todasEspecialidades.map(esp => {
+      const contagem = especialidadesComContagem.find(c => c._id === esp.nome);
+      return {
+        especialidade: esp.nome,
+        total_contatos: contagem ? contagem.count : 0
+      };
+    });
+
     res.json({
-      especialidades,
-      total_especialidades: especialidades.length
+      especialidades: especialidadesComInfo,
+      total_especialidades: todasEspecialidades.length
     });
 
   } catch (error) {

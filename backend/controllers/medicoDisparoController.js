@@ -231,46 +231,86 @@ exports.uploadArquivo = upload.single('arquivo');
 
 exports.importarArquivo = async (req, res) => {
   try {
+    console.log('=== INÍCIO DA IMPORTAÇÃO ===');
+    console.log('req.file:', req.file);
+    console.log('req.user:', req.user);
+    
     if (!req.file) {
+      console.log('ERRO: Arquivo não encontrado');
       return res.status(400).json({ error: 'Arquivo é obrigatório' });
     }
 
     const caminhoArquivo = req.file.path;
+    console.log('Caminho do arquivo:', caminhoArquivo);
+    
     const workbook = XLSX.readFile(caminhoArquivo);
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
     const dados = XLSX.utils.sheet_to_json(worksheet);
+    
+    console.log('Dados extraídos:', dados.length, 'linhas');
+    console.log('Primeira linha:', dados[0]);
 
     let inseridos = 0;
     let atualizados = 0;
     let ignorados = 0;
     const erros = [];
 
-    for (const linha of dados) {
+    for (let i = 0; i < dados.length; i++) {
+      const linha = dados[i];
+      const numeroLinha = i + 2; // +2 porque começa na linha 1 e tem cabeçalho
+      
       try {
+        console.log(`Processando linha ${numeroLinha}:`, linha);
         const dadosProcessados = MedicoDisparo.processarDadosImportacao(linha);
+        console.log('Dados processados:', dadosProcessados);
         
-        if (!dadosProcessados.telefone) {
+        // Validação de campos obrigatórios
+        const errosValidacao = [];
+        
+        if (!dadosProcessados.nome || dadosProcessados.nome.trim() === '') {
+          errosValidacao.push('Nome é obrigatório');
+        }
+        
+        if (!dadosProcessados.telefone || dadosProcessados.telefone.trim() === '') {
+          errosValidacao.push('Telefone é obrigatório');
+        } else {
+          // Validar formato do telefone
+          const telefoneNormalizado = dadosProcessados.telefone.replace(/\D/g, '');
+          if (telefoneNormalizado.length < 10 || telefoneNormalizado.length > 13) {
+            errosValidacao.push('Telefone deve ter entre 10 e 13 dígitos');
+          }
+        }
+        
+        if (errosValidacao.length > 0) {
+          console.log(`Linha ${numeroLinha} ignorada - erros de validação:`, errosValidacao);
           ignorados++;
-          erros.push(`Linha sem telefone: ${JSON.stringify(linha)}`);
+          erros.push(`Linha ${numeroLinha}: ${errosValidacao.join(', ')}`);
           continue;
         }
 
         dadosProcessados.origem_registro = 'xlsx_upload';
         
         const telefoneNormalizado = dadosProcessados.telefone.replace(/\D/g, '');
+        console.log('Telefone normalizado:', telefoneNormalizado);
+        
         const existente = await MedicoDisparo.findOne({ telefone: telefoneNormalizado });
+        console.log('Contato existente:', existente ? 'SIM' : 'NÃO');
         
         if (existente) {
           await MedicoDisparo.upsertPorTelefone(dadosProcessados, req.user.id);
           atualizados++;
+          console.log(`Linha ${numeroLinha}: Contato atualizado`);
         } else {
           await MedicoDisparo.upsertPorTelefone(dadosProcessados, req.user.id);
           inseridos++;
+          console.log(`Linha ${numeroLinha}: Contato inserido`);
         }
       } catch (error) {
+        console.log(`ERRO no processamento da linha ${numeroLinha}:`, error.message);
+        console.log('Stack trace:', error.stack);
         ignorados++;
-        erros.push(`Erro na linha ${JSON.stringify(linha)}: ${error.message}`);
+        erros.push(`Linha ${numeroLinha}: ${error.message}`);
       }
     }
 

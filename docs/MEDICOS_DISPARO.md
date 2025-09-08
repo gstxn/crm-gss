@@ -13,7 +13,7 @@ Este módulo foi criado para gerenciar contatos mínimos para envio em massa, se
 | especialidades | Array | Não | Lista de especialidades (mapeado de Tags) |
 | canal | String | Não | Canal de origem (mapeado de Canal) |
 | email | String | Não | Email validado (mapeado de E-mail) |
-| codigo_origem | String | Não | Código de origem (mapeado de Código) |
+| estado | String | Não | Estado (UF) do médico - 2 letras maiúsculas (mapeado de Estado/UF) |
 | origem_registro | Enum | Sim | xlsx_upload, google_sheets_sync, manual |
 | permitido_envio | Boolean | Sim | Default: true |
 | status_contato | Enum | Sim | novo, fila, enviado, falha, opt_out |
@@ -89,7 +89,7 @@ Este módulo foi criado para gerenciar contatos mínimos para envio em massa, se
 | Tags | especialidades |
 | Canal | canal |
 | E-mail | email |
-| Código | codigo_origem |
+| Estado/UF | estado |
 
 ### Regras de Processamento
 1. **Normalização de Telefone**: Remove espaços, máscaras, mantém apenas dígitos

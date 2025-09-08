@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Container,
   Typography,
@@ -48,10 +48,7 @@ import {
 import {
   Add as AddIcon,
   Upload as UploadIcon,
-  Download as DownloadIcon,
-  Sync as SyncIcon,
   FilterList as FilterIcon,
-  MoreVert as MoreVertIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
   Send as SendIcon,
@@ -65,16 +62,11 @@ import {
   TrendingUp as TrendingUpIcon,
   Search as SearchIcon,
   Clear as ClearIcon,
-  ExpandMore as ExpandMoreIcon,
-  ExpandLess as ExpandLessIcon,
   Visibility as VisibilityIcon,
   GetApp as GetAppIcon,
   CloudSync as CloudSyncIcon,
   UploadFile as UploadFileIcon,
-  CloudUpload as CloudUploadIcon,
-  PersonAdd as PersonAddIcon,
-  Save as SaveIcon,
-  PauseCircle as PauseCircleIcon
+  CloudUpload as CloudUploadIcon
 } from '@mui/icons-material';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -103,29 +95,29 @@ const MedicosDisparo = () => {
     especialidades: [],
     canal: '',
     email: '',
-    codigo_origem: '',
+    estado: '',
     observacoes: ''
   });
   const [arquivo, setArquivo] = useState(null);
   const [arquivoImportacao, setArquivoImportacao] = useState(null);
-  const [menuAnchor, setMenuAnchor] = useState(null);
+  // const [menuAnchor, setMenuAnchor] = useState(null); // Removido - não utilizado
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
   const [estatisticas, setEstatisticas] = useState({});
 
-  // Carregar dados iniciais
-  useEffect(() => {
-    carregarMedicos();
-    carregarEspecialidades();
-    carregarEstatisticas();
-  }, [page, rowsPerPage, filtros]);
+  // Memoizar filtros para evitar loops infinitos
+  const filtrosMemoizados = useMemo(() => filtros, [filtros]);
 
-  const carregarMedicos = async () => {
+  const mostrarSnackbar = (message, severity = 'info') => {
+    setSnackbar({ open: true, message, severity });
+  };
+
+  const carregarMedicos = useCallback(async () => {
     try {
       setLoading(true);
       const params = {
         page: page + 1,
         limit: rowsPerPage,
-        ...filtros
+        ...filtrosMemoizados
       };
       
       // Remover parâmetros vazios
@@ -144,7 +136,12 @@ const MedicosDisparo = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, rowsPerPage, filtrosMemoizados]);
+
+  // Carregar dados iniciais
+  useEffect(() => {
+    carregarMedicos();
+  }, [carregarMedicos]);
 
   const carregarEspecialidades = async () => {
     try {
@@ -164,9 +161,11 @@ const MedicosDisparo = () => {
     }
   };
 
-  const mostrarSnackbar = (message, severity = 'info') => {
-    setSnackbar({ open: true, message, severity });
-  };
+  // Carregar especialidades e estatísticas apenas uma vez
+  useEffect(() => {
+    carregarEspecialidades();
+    carregarEstatisticas();
+  }, []);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -219,7 +218,7 @@ const MedicosDisparo = () => {
         especialidades: medico.especialidades || [],
         canal: medico.canal || '',
         email: medico.email || '',
-        codigo_origem: medico.codigo_origem || '',
+        estado: medico.estado || '',
         observacoes: medico.observacoes || ''
       });
     } else {
@@ -229,7 +228,7 @@ const MedicosDisparo = () => {
         especialidades: [],
         canal: '',
         email: '',
-        codigo_origem: '',
+        estado: '',
         observacoes: ''
       });
     }
@@ -241,7 +240,7 @@ const MedicosDisparo = () => {
     setDialogAberto(false);
     setTipoDialog('');
     setMedicoSelecionado(null);
-    setArquivo(null);
+    setArquivoImportacao(null);
   };
 
   const salvarMedico = async () => {
@@ -307,14 +306,14 @@ const MedicosDisparo = () => {
   };
 
   const importarArquivo = async () => {
-    if (!arquivo) {
+    if (!arquivoImportacao) {
       mostrarSnackbar('Selecione um arquivo', 'warning');
       return;
     }
 
     try {
       const formDataUpload = new FormData();
-      formDataUpload.append('arquivo', arquivo);
+      formDataUpload.append('arquivo', arquivoImportacao);
       
       const response = await api.post('/medicos-disparo/importar', formDataUpload, {
         headers: {
@@ -597,7 +596,6 @@ const MedicosDisparo = () => {
                     status_contato: '',
                     tem_email: ''
                   });
-                  carregarMedicos();
                 }}
                 sx={{ 
                   bgcolor: 'grey.100',
@@ -654,7 +652,7 @@ const MedicosDisparo = () => {
                   onChange={(e) => setFiltros({ ...filtros, especialidades: e.target.value })}
                   renderValue={(selected) => (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                      {selected.map((value) => (
+                      {Array.isArray(selected) ? selected.map((value) => (
                         <Chip 
                           key={value} 
                           label={value} 
@@ -665,7 +663,7 @@ const MedicosDisparo = () => {
                             fontWeight: 500
                           }}
                         />
-                      ))}
+                      )) : null}
                     </Box>
                   )}
                   sx={{
@@ -1321,7 +1319,7 @@ const MedicosDisparo = () => {
                     onChange={(e) => setFormData({ ...formData, especialidades: e.target.value })}
                     renderValue={(selected) => (
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {selected.map((value) => (
+                        {Array.isArray(selected) ? selected.map((value) => (
                           <Chip 
                             key={value} 
                             label={value} 
@@ -1332,7 +1330,7 @@ const MedicosDisparo = () => {
                               fontWeight: 500
                             }}
                           />
-                        ))}
+                        )) : null}
                       </Box>
                     )}
                     sx={{
@@ -1367,10 +1365,12 @@ const MedicosDisparo = () => {
                     }}
                   />
                   <TextField
-                    label="Código de Origem"
-                    value={formData.codigo_origem}
-                    onChange={(e) => setFormData({ ...formData, codigo_origem: e.target.value })}
+                    label="Estado"
+                    value={formData.estado}
+                    onChange={(e) => setFormData({ ...formData, estado: e.target.value.toUpperCase() })}
                     fullWidth
+                    placeholder="Ex: SP, RJ, MG"
+                    inputProps={{ maxLength: 2 }}
                     sx={{
                       '& .MuiOutlinedInput-root': {
                         bgcolor: 'white',
@@ -1498,10 +1498,19 @@ const MedicosDisparo = () => {
                 📊 XLSX, XLS, CSV
               </Typography>
               <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
-                Colunas Esperadas
+                Campos Obrigatórios
+              </Typography>
+              <Typography variant="body2" sx={{ mb: 1, color: 'error.600' }}>
+                ✅ Nome/Cliente (obrigatório) • ✅ Telefone/Contato (obrigatório)
+              </Typography>
+              <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
+                Campos Opcionais (adaptação automática)
               </Typography>
               <Typography variant="body2">
-                👤 Cliente • 📞 Contato • 🏷️ Tags • 📡 Canal • 📧 E-mail • 🔢 Código
+                🏷️ Especialidades/Tags • 📡 Canal • 📧 E-mail • 🌍 Estado/UF • 📝 Observações
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 1, fontSize: '0.75rem', color: 'text.secondary' }}>
+                💡 O sistema reconhece automaticamente diferentes nomes de colunas
               </Typography>
             </Alert>
 

@@ -1,8 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { FaUserMd, FaSearch, FaFilter, FaPlus, FaEye, FaEllipsisV } from 'react-icons/fa';
-import './Medicos.css';
+import {
+  Container,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  Box,
+  Button,
+  TextField,
+  InputAdornment,
+  Chip,
+  Avatar,
+  IconButton,
+  Menu,
+  MenuItem,
+  Pagination,
+  Paper,
+  Collapse,
+  FormControl,
+  InputLabel,
+  Select
+} from '@mui/material';
+import {
+  PersonAdd as PersonAddIcon,
+  Search as SearchIcon,
+  FilterList as FilterIcon,
+  Visibility as VisibilityIcon,
+  MoreVert as MoreVertIcon,
+  Person as PersonIcon,
+  LocalHospital as LocalHospitalIcon,
+  LocationOn as LocationIcon,
+  Phone as PhoneIcon,
+  Email as EmailIcon,
+  ExpandMore as ExpandMoreIcon,
+  ExpandLess as ExpandLessIcon
+} from '@mui/icons-material';
 
 const Medicos = () => {
   const [medicos, setMedicos] = useState([]);
@@ -155,176 +189,353 @@ const Medicos = () => {
   };
 
   return (
-    <div className="medicos-container">
-      <div className="medicos-header">
-        <h1><FaUserMd /> Médicos</h1>
-        <Link to="/medicos/novo" className="btn-novo-medico">
-          <FaPlus /> Novo Médico
-        </Link>
-      </div>
-
-      <div className="medicos-actions">
-        <form onSubmit={handleSearch} className="search-form">
-          <div className="search-input-container">
-            <input
-              type="text"
-              placeholder="Buscar médicos por nome..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <button type="submit" className="btn-search">
-              <FaSearch />
-            </button>
-          </div>
-        </form>
-
-        <button 
-          className="btn-filter" 
-          onClick={() => setShowFilters(!showFilters)}
+    <Container maxWidth="xl" sx={{ py: 4 }}>
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        mb: 4,
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        borderRadius: 3,
+        p: 3,
+        color: 'white'
+      }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <LocalHospitalIcon sx={{ fontSize: 40 }} />
+          <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
+            Médicos
+          </Typography>
+        </Box>
+        <Button
+          component={Link}
+          to="/medicos/novo"
+          variant="contained"
+          startIcon={<PersonAddIcon />}
+          sx={{
+            background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+            boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+            '&:hover': {
+              background: 'linear-gradient(45deg, #FE6B8B 60%, #FF8E53 100%)',
+              transform: 'translateY(-2px)',
+              boxShadow: '0 6px 20px rgba(255, 105, 135, .4)'
+            }
+          }}
         >
-          <FaFilter /> Filtros
-        </button>
-      </div>
+          Novo Médico
+        </Button>
+      </Box>
 
-      {showFilters && (
-        <div className="filter-panel">
-          <div className="filter-row">
-            <div className="filter-group">
-              <label>Especialidade</label>
-              <select 
-                name="especialidade" 
-                value={filtros.especialidade} 
-                onChange={handleFiltroChange}
-              >
-                <option value="">Todas</option>
-                {especialidades.map((esp) => (
-                  <option key={esp._id || esp} value={esp.nome || esp}>
-                    {esp.nome || esp}
-                  </option>
-                ))}
-              </select>
-            </div>
+      <Paper sx={{ p: 3, mb: 3, borderRadius: 3, boxShadow: 3 }}>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+          <TextField
+            placeholder="Buscar médicos por nome..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="action" />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ flexGrow: 1, minWidth: 300 }}
+            variant="outlined"
+          />
+          <Button
+            onClick={handleSearch}
+            variant="contained"
+            sx={{
+              background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+              '&:hover': {
+                background: 'linear-gradient(45deg, #2196F3 60%, #21CBF3 100%)',
+              }
+            }}
+          >
+            Buscar
+          </Button>
+          <Button
+            onClick={() => setShowFilters(!showFilters)}
+            variant="outlined"
+            startIcon={showFilters ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            sx={{ borderColor: '#667eea', color: '#667eea' }}
+          >
+            Filtros
+          </Button>
+        </Box>
+      </Paper>
 
-            <div className="filter-group">
-              <label>Estado</label>
-              <select 
-                name="estado" 
-                value={filtros.estado} 
-                onChange={handleFiltroChange}
-              >
-                <option value="">Todos</option>
-                {estados.map((estado) => (
-                  <option key={estado.sigla || estado} value={estado.sigla || estado}>
-                    {estado.nome || estado}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="filter-group">
-              <label>Cidade</label>
-              <select 
-                name="cidade" 
-                value={filtros.cidade} 
-                onChange={handleFiltroChange}
-                disabled={!filtros.estado}
-              >
-                <option value="">
-                  {!filtros.estado ? 'Selecione um estado primeiro' : 'Todas'}
-                </option>
-                {cidades.map((cidade) => (
-                  <option key={cidade.nome || cidade} value={cidade.nome || cidade}>
-                    {cidade.nome || cidade}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="filter-actions">
-            <button onClick={limparFiltros} className="btn-limpar">
+      <Collapse in={showFilters}>
+        <Paper sx={{ p: 3, mb: 3, borderRadius: 3, background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)' }}>
+          <Typography variant="h6" sx={{ mb: 3, color: '#333', fontWeight: 'bold' }}>
+            Filtros Avançados
+          </Typography>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={4}>
+              <FormControl fullWidth>
+                <InputLabel>Especialidade</InputLabel>
+                <Select
+                  name="especialidade"
+                  value={filtros.especialidade}
+                  onChange={handleFiltroChange}
+                  label="Especialidade"
+                >
+                  <MenuItem value="">Todas</MenuItem>
+                  {especialidades.map((esp) => (
+                    <MenuItem key={esp._id || esp} value={esp.nome || esp}>
+                      {esp.nome || esp}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <FormControl fullWidth>
+                <InputLabel>Estado</InputLabel>
+                <Select
+                  name="estado"
+                  value={filtros.estado}
+                  onChange={handleFiltroChange}
+                  label="Estado"
+                >
+                  <MenuItem value="">Todos</MenuItem>
+                  {estados.map((estado) => (
+                    <MenuItem key={estado.sigla || estado} value={estado.sigla || estado}>
+                      {estado.nome || estado}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <FormControl fullWidth disabled={!filtros.estado}>
+                <InputLabel>Cidade</InputLabel>
+                <Select
+                  name="cidade"
+                  value={filtros.cidade}
+                  onChange={handleFiltroChange}
+                  label="Cidade"
+                >
+                  <MenuItem value="">
+                    {!filtros.estado ? 'Selecione um estado primeiro' : 'Todas'}
+                  </MenuItem>
+                  {cidades.map((cidade) => (
+                    <MenuItem key={cidade.nome || cidade} value={cidade.nome || cidade}>
+                      {cidade.nome || cidade}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+          <Box sx={{ display: 'flex', gap: 2, mt: 3, justifyContent: 'flex-end' }}>
+            <Button
+              onClick={limparFiltros}
+              variant="outlined"
+              sx={{ borderColor: '#ff6b6b', color: '#ff6b6b' }}
+            >
               Limpar Filtros
-            </button>
-            <button onClick={aplicarFiltros} className="btn-aplicar">
+            </Button>
+            <Button
+              onClick={aplicarFiltros}
+              variant="contained"
+              sx={{
+                background: 'linear-gradient(45deg, #4CAF50 30%, #45a049 90%)',
+                '&:hover': {
+                  background: 'linear-gradient(45deg, #4CAF50 60%, #45a049 100%)',
+                }
+              }}
+            >
               Aplicar Filtros
-            </button>
-          </div>
-        </div>
-      )}
+            </Button>
+          </Box>
+        </Paper>
+      </Collapse>
 
       {loading ? (
-        <div className="loading-container">
-          <p>Carregando médicos...</p>
-        </div>
+        <Paper sx={{ 
+          p: 4, 
+          textAlign: 'center', 
+          borderRadius: 3,
+          background: 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)'
+        }}>
+          <Typography variant="h6" color="primary">
+            Carregando médicos...
+          </Typography>
+        </Paper>
       ) : error ? (
-        <div className="error-container">
-          <p>{error}</p>
-          <button onClick={fetchMedicos}>Tentar Novamente</button>
-        </div>
+        <Paper sx={{ 
+          p: 4, 
+          textAlign: 'center', 
+          borderRadius: 3,
+          background: 'linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%)'
+        }}>
+          <Typography variant="h6" color="error" sx={{ mb: 2 }}>
+            {error}
+          </Typography>
+          <Button 
+            onClick={fetchMedicos}
+            variant="contained"
+            color="error"
+            sx={{
+              '&:hover': {
+                transform: 'translateY(-2px)',
+                boxShadow: '0 6px 20px rgba(244, 67, 54, .4)'
+              }
+            }}
+          >
+            Tentar Novamente
+          </Button>
+        </Paper>
       ) : medicos.length === 0 ? (
-        <div className="no-data-message">
-          <p>Nenhum médico encontrado. Tente ajustar os filtros ou adicione um novo médico.</p>
-        </div>
+        <Paper sx={{ 
+          p: 4, 
+          textAlign: 'center', 
+          borderRadius: 3,
+          background: 'linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%)'
+        }}>
+          <Typography variant="h6" color="text.secondary">
+            Nenhum médico encontrado. Tente ajustar os filtros ou adicione um novo médico.
+          </Typography>
+        </Paper>
       ) : (
-        <div className="medicos-list">
+        <Grid container spacing={3}>
           {medicos.map((medico) => (
-            <div key={medico._id} className="medico-card">
-              <div className="medico-info">
-                <h3>{medico.nome}</h3>
-                <div className="medico-details">
-                  <p className="medico-crm">
-                    <strong>CRM:</strong> {medico.crm}
-                  </p>
-                  <p className="medico-especialidade">
-                    <strong>Especialidade:</strong> {medico.especialidade}
-                  </p>
-                  <p className="medico-local">
-                    <strong>Localização:</strong> {medico.cidade}/{medico.estado}
-                  </p>
-                  <p className="medico-contato">
-                    <strong>Contato:</strong> {medico.telefone} | {medico.email}
-                  </p>
-                </div>
-              </div>
-              <div className="medico-actions">
-                <Link to={`/medicos/${medico._id}`} className="btn-ver">
-                  <FaEye /> Ver Detalhes
-                </Link>
-                <div className="dropdown">
-                  <button className="btn-dropdown">
-                    <FaEllipsisV />
-                  </button>
-                  <div className="dropdown-content">
-                    <Link to={`/medicos/${medico._id}/editar`}>Editar</Link>
-                    <button onClick={() => {}}>Excluir</button>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Grid item xs={12} md={6} lg={4} key={medico._id}>
+              <Card sx={{
+                borderRadius: 3,
+                boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-5px)',
+                  boxShadow: '0 8px 30px rgba(0,0,0,0.15)'
+                }
+              }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <Avatar sx={{ 
+                      bgcolor: 'primary.main', 
+                      mr: 2,
+                      background: 'linear-gradient(45deg, #667eea 30%, #764ba2 90%)'
+                    }}>
+                      <PersonIcon />
+                    </Avatar>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#333' }}>
+                      {medico.nome}
+                    </Typography>
+                  </Box>
+                  
+                  <Box sx={{ mb: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <LocalHospitalIcon sx={{ fontSize: 16, mr: 1, color: '#666' }} />
+                      <Typography variant="body2" color="text.secondary">
+                        <strong>CRM:</strong> {medico.crm}
+                      </Typography>
+                    </Box>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <Chip 
+                        label={medico.especialidade}
+                        size="small"
+                        sx={{
+                          background: 'linear-gradient(45deg, #4CAF50 30%, #45a049 90%)',
+                          color: 'white',
+                          fontWeight: 'bold'
+                        }}
+                      />
+                    </Box>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <LocationIcon sx={{ fontSize: 16, mr: 1, color: '#666' }} />
+                      <Typography variant="body2" color="text.secondary">
+                        {medico.cidade}/{medico.estado}
+                      </Typography>
+                    </Box>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <PhoneIcon sx={{ fontSize: 16, mr: 1, color: '#666' }} />
+                      <Typography variant="body2" color="text.secondary">
+                        {medico.telefone}
+                      </Typography>
+                    </Box>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <EmailIcon sx={{ fontSize: 16, mr: 1, color: '#666' }} />
+                      <Typography variant="body2" color="text.secondary" sx={{ 
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }}>
+                        {medico.email}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
+                    <Button
+                      component={Link}
+                      to={`/medicos/${medico._id}`}
+                      variant="contained"
+                      size="small"
+                      startIcon={<VisibilityIcon />}
+                      sx={{
+                        background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                        '&:hover': {
+                          background: 'linear-gradient(45deg, #2196F3 60%, #21CBF3 100%)',
+                        }
+                      }}
+                    >
+                      Ver Detalhes
+                    </Button>
+                    
+                    <IconButton
+                      size="small"
+                      sx={{ color: '#666' }}
+                    >
+                      <MoreVertIcon />
+                    </IconButton>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
           ))}
-        </div>
+        </Grid>
       )}
 
       {!loading && !error && medicos.length > 0 && (
-        <div className="pagination">
-          <button 
-            onClick={() => mudarPagina(paginacao.paginaAtual - 1)}
-            disabled={paginacao.paginaAtual === 1}
-          >
-            Anterior
-          </button>
-          <span>
-            Página {paginacao.paginaAtual} de {paginacao.paginas}
-          </span>
-          <button 
-            onClick={() => mudarPagina(paginacao.paginaAtual + 1)}
-            disabled={paginacao.paginaAtual === paginacao.paginas}
-          >
-            Próxima
-          </button>
-        </div>
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          mt: 4 
+        }}>
+          <Paper sx={{ 
+            p: 2, 
+            borderRadius: 3,
+            background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)'
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Pagination
+                count={paginacao.paginas}
+                page={paginacao.paginaAtual}
+                onChange={(event, page) => mudarPagina(page)}
+                color="primary"
+                sx={{
+                  '& .MuiPaginationItem-root': {
+                    '&:hover': {
+                      background: 'linear-gradient(45deg, #667eea 30%, #764ba2 90%)',
+                      color: 'white'
+                    }
+                  }
+                }}
+              />
+              <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }}>
+                Página {paginacao.paginaAtual} de {paginacao.paginas}
+              </Typography>
+            </Box>
+          </Paper>
+        </Box>
       )}
-    </div>
+    </Container>
   );
 };
 

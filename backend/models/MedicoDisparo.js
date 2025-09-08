@@ -39,9 +39,17 @@ const medicoDisparoSchema = new mongoose.Schema({
       message: 'Email deve ter formato válido'
     }
   },
-  codigo_origem: {
+  estado: {
     type: String,
-    trim: true
+    trim: true,
+    uppercase: true,
+    validate: {
+      validator: function(v) {
+        if (!v) return true; // Estado é opcional
+        return /^[A-Z]{2}$/.test(v);
+      },
+      message: 'Estado deve ter 2 letras maiúsculas (ex: SP, RJ)'
+    }
   },
   origem_registro: {
     type: String,
@@ -139,30 +147,66 @@ medicoDisparoSchema.statics.upsertPorTelefone = async function(dadosContato, use
 medicoDisparoSchema.statics.processarDadosImportacao = function(dadosLinha) {
   const dados = {};
   
-  // Mapeamento automático
-  if (dadosLinha.Cliente || dadosLinha.cliente || dadosLinha.Nome || dadosLinha.nome) {
-    dados.nome = dadosLinha.Cliente || dadosLinha.cliente || dadosLinha.Nome || dadosLinha.nome;
+  // Mapeamento automático flexível - busca por diferentes variações de nomes de colunas
+  const chavesNome = Object.keys(dadosLinha).find(key => 
+    /^(cliente|nome|name|doctor|medico|dr)$/i.test(key.trim())
+  );
+  if (chavesNome && dadosLinha[chavesNome]) {
+    dados.nome = String(dadosLinha[chavesNome]).trim();
   }
   
-  if (dadosLinha.Contato || dadosLinha.contato || dadosLinha.Telefone || dadosLinha.telefone) {
-    dados.telefone = dadosLinha.Contato || dadosLinha.contato || dadosLinha.Telefone || dadosLinha.telefone;
+  const chavesTelefone = Object.keys(dadosLinha).find(key => 
+    /^(contato|telefone|phone|celular|whatsapp|tel|fone)$/i.test(key.trim())
+  );
+  if (chavesTelefone && dadosLinha[chavesTelefone]) {
+    dados.telefone = String(dadosLinha[chavesTelefone]).trim();
   }
   
-  if (dadosLinha.Tags || dadosLinha.tags || dadosLinha.Especialidades || dadosLinha.especialidades) {
-    const tagsString = dadosLinha.Tags || dadosLinha.tags || dadosLinha.Especialidades || dadosLinha.especialidades;
-    dados.especialidades = tagsString ? tagsString.split(/[,;]/).map(tag => tag.trim()).filter(tag => tag) : [];
+  // Especialidades - busca flexível
+  const chavesEspecialidades = Object.keys(dadosLinha).find(key => 
+    /^(tags|especialidades|especialidade|specialty|area|categoria)$/i.test(key.trim())
+  );
+  if (chavesEspecialidades && dadosLinha[chavesEspecialidades]) {
+    const tagsString = String(dadosLinha[chavesEspecialidades]);
+    dados.especialidades = tagsString ? tagsString.split(/[,;|]/).map(tag => tag.trim()).filter(tag => tag) : [];
   }
   
-  if (dadosLinha.Canal || dadosLinha.canal) {
-    dados.canal = dadosLinha.Canal || dadosLinha.canal;
+  // Canal - busca flexível
+  const chavesCanal = Object.keys(dadosLinha).find(key => 
+    /^(canal|channel|origem|source|plataforma)$/i.test(key.trim())
+  );
+  if (chavesCanal && dadosLinha[chavesCanal]) {
+    dados.canal = String(dadosLinha[chavesCanal]).trim();
   }
   
-  if (dadosLinha['E-mail'] || dadosLinha.email || dadosLinha.Email) {
-    dados.email = dadosLinha['E-mail'] || dadosLinha.email || dadosLinha.Email;
+  // Email - busca flexível
+  const chavesEmail = Object.keys(dadosLinha).find(key => 
+    /^(e-mail|email|mail|correio)$/i.test(key.trim())
+  );
+  if (chavesEmail && dadosLinha[chavesEmail]) {
+    const emailValue = String(dadosLinha[chavesEmail]).trim();
+    if (emailValue && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
+      dados.email = emailValue.toLowerCase();
+    }
   }
   
-  if (dadosLinha.Código || dadosLinha.codigo || dadosLinha.Codigo) {
-    dados.codigo_origem = dadosLinha.Código || dadosLinha.codigo || dadosLinha.Codigo;
+  // Estado - busca flexível
+  const chavesEstado = Object.keys(dadosLinha).find(key => 
+    /^(estado|uf|state|regiao|region)$/i.test(key.trim())
+  );
+  if (chavesEstado && dadosLinha[chavesEstado]) {
+    const estadoValue = String(dadosLinha[chavesEstado]).trim().toUpperCase();
+    if (estadoValue.length === 2) {
+      dados.estado = estadoValue;
+    }
+  }
+  
+  // Observações - busca flexível
+  const chavesObservacoes = Object.keys(dadosLinha).find(key => 
+    /^(observacoes|observacao|obs|notes|comentarios|descricao)$/i.test(key.trim())
+  );
+  if (chavesObservacoes && dadosLinha[chavesObservacoes]) {
+    dados.observacoes = String(dadosLinha[chavesObservacoes]).trim();
   }
   
   return dados;

@@ -32,6 +32,12 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Cargo é obrigatório'],
     trim: true
   },
+  role: {
+    type: String,
+    enum: ['admin', 'operador_disparo', 'leitura', 'user'],
+    default: 'user',
+    required: true
+  },
   telefone: {
     type: String,
     trim: true
