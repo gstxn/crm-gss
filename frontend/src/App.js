@@ -15,6 +15,7 @@ import Medicos from './pages/Medicos';
 import MedicoDetalhes from './pages/MedicoDetalhes';
 import NovoMedico from './pages/NovoMedico';
 import EditarMedico from './pages/EditarMedico';
+import MedicosDisparo from './pages/MedicosDisparo';
 import Clientes from './pages/Clientes';
 import ClienteDetalhes from './pages/ClienteDetalhes';
 import NovoCliente from './pages/NovoCliente';
@@ -92,6 +93,7 @@ function App() {
         <Route path="/medicos/novo" element={<ProtectedRoute><NovoMedico /></ProtectedRoute>} />
         <Route path="/medicos/:id" element={<ProtectedRoute><MedicoDetalhes /></ProtectedRoute>} />
         <Route path="/medicos/:id/editar" element={<ProtectedRoute><EditarMedico /></ProtectedRoute>} />
+        <Route path="/medicos-disparo" element={<ProtectedRoute><MedicosDisparo /></ProtectedRoute>} />
         <Route path="/clientes" element={<ProtectedRoute><Clientes /></ProtectedRoute>} />
         <Route path="/clientes/novo" element={<ProtectedRoute><NovoCliente /></ProtectedRoute>} />
         <Route path="/clientes/:id" element={<ProtectedRoute><ClienteDetalhes /></ProtectedRoute>} />

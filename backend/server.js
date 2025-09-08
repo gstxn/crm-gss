@@ -25,8 +25,11 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: process.env.FRONTEND_URL || '*',
-  credentials: true
+  origin: [process.env.FRONTEND_URL || 'http://localhost:3000', 'http://localhost:3001'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  optionsSuccessStatus: 200
 }));
 
 // Pasta para uploads
@@ -42,6 +45,10 @@ app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 app.use('/api/tasks', require('./routes/taskRoutes'));
 app.use('/api/mensagens', require('./routes/mensagemRoutes'));
 app.use('/api', require('./routes/utilsRoutes')); // Rotas para especialidades, estados e cidades
+
+// Rotas do módulo Médicos Disparo
+app.use('/api/medicos-disparo', require('./routes/medicoDisparo'));
+app.use('/api/disparo', require('./routes/disparo'));
 
 // Kanban routes (v1) com middleware de feature flag
 const kanbanFlagMiddleware = require('./middleware/kanbanFlagMiddleware');

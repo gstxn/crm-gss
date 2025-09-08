@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { FaHome, FaBriefcase, FaUserMd, FaHospital, FaChartBar, FaSignOutAlt, FaEnvelope, FaCheckCircle, FaClipboardList, FaColumns } from 'react-icons/fa';
+import { FaHome, FaBriefcase, FaUserMd, FaHospital, FaChartBar, FaSignOutAlt, FaEnvelope, FaCheckCircle, FaClipboardList, FaColumns, FaPaperPlane } from 'react-icons/fa';
 import MensagemBadge from './MensagemBadge';
 import './Sidebar.css';
 import { FaBars } from 'react-icons/fa';
@@ -37,6 +37,12 @@ const Sidebar = () => {
             <NavLink to="/medicos" className={({ isActive }) => isActive ? 'active' : ''}>
               <FaUserMd className="icon" />
               <span>Médicos</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/medicos-disparo" className={({ isActive }) => isActive ? 'active' : ''}>
+              <FaPaperPlane className="icon" />
+              <span>Médicos (Disparo)</span>
             </NavLink>
           </li>
           <li>
