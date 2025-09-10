@@ -1,0 +1,66 @@
+# Dependências
+node_modules/
+
+# Arquivos de build
+/frontend/build/
+/dist/
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Credenciais sensíveis
+backend/config/service-account.json
+backend/config/oauth2-client.json
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos grandes (mais de 10MB)
+*.mp4
+*.mov
+*.avi
+*.wmv
+*.pdf
+*.psd
+*.ai
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
+*.iso
+
+# Arquivos de IDE/editores
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Arquivos de cache
+.cache/
+.npm/
+.eslintcache
+
+# Arquivos de cobertura de testes
+coverage/
+
+# Arquivos temporários
+tmp/
+temp/
+
+# Arquivos de build específicos do React
+/frontend/build/static/js/*.js
+/frontend/build/static/css/*.css
+/frontend/build/static/media/

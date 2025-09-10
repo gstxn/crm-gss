@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CRM Apresentação</title>
+
+    <!-- Importa o sistema de design existente -->
+    <link rel="stylesheet" href="./frontend/src/index.css" />
+
+    <style>
+      /* Estilos adicionais específicos desta página */
+      body {
+        background: var(--background-color, #f7f8fa);
+        color: var(--text-color, #333);
+        font-family: var(--font-family, 'Inter', sans-serif);
+      }
+
+      /* Seção hero */
+      .hero {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: var(--spacing-lg, 4rem) var(--spacing-md, 2rem);
+        text-align: center;
+      }
+
+      .hero h1 {
+        font-size: var(--font-size-xxl, 3rem);
+        margin-bottom: var(--spacing-sm, 0.75rem);
+        font-weight: var(--font-weight-bold, 700);
+      }
+
+      .hero p {
+        font-size: var(--font-size-md, 1.125rem);
+        max-width: 50rem;
+        margin-bottom: var(--spacing-md, 1.5rem);
+        color: var(--text-secondary, #555);
+      }
+
+      .btn-primary {
+        display: inline-block;
+        background: var(--primary-color, #1b6ef3);
+        color: var(--white, #fff);
+        padding: var(--spacing-sm, 0.75rem) var(--spacing-md, 1.5rem);
+        border-radius: var(--border-radius-sm, 4px);
+        font-weight: var(--font-weight-semibold, 600);
+        text-decoration: none;
+        transition: background var(--transition-normal, 0.3s ease);
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-dark, #1554c7);
+      }
+
+      /* Seção features */
+      .features {
+        max-width: var(--container-max-width, 1200px);
+        margin: 0 auto;
+        padding: var(--spacing-md, 2rem);
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--spacing-md, 2rem);
+      }
+
+      .feature-card {
+        background: var(--white, #fff);
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: var(--border-radius-sm, 4px);
+        padding: var(--spacing-md, 2rem);
+        box-shadow: var(--shadow-bottom, 0 2px 4px rgba(0, 0, 0, 0.05));
+        text-align: center;
+        transition: transform var(--transition-normal, 0.3s ease);
+      }
+
+      .feature-card:hover {
+        transform: translateY(-4px);
+      }
+
+      .feature-card h3 {
+        font-size: var(--font-size-lg, 1.25rem);
+        margin-bottom: var(--spacing-xs, 0.5rem);
+        font-weight: var(--font-weight-medium, 500);
+      }
+
+      .feature-card p {
+        font-size: var(--font-size-sm, 1rem);
+        color: var(--text-secondary, #555);
+      }
+
+      /* Rodapé */
+      footer {
+        text-align: center;
+        padding: var(--spacing-md, 2rem) 0;
+        background: var(--background-dark, #f0f1f3);
+        color: var(--text-secondary, #666);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Seção Hero -->
+    <section class="hero">
+      <h1>Bem-vindo ao CRM Empresarial</h1>
+      <p>
+        Gerencie oportunidades, médicos, clientes e comunicações em uma plataforma
+        centralizada, moderna e intuitiva.
+      </p>
+      <a href="./frontend/src/index.html" class="btn-primary">Entrar no Sistema</a>
+    </section>
+
+    <!-- Seção de recursos principais -->
+    <section class="features">
+      <div class="feature-card">
+        <h3>Oportunidades</h3>
+        <p>Acompanhe e monitore oportunidades de negócio em tempo real.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Médicos</h3>
+        <p>
+          Gerencie informações de médicos, especialidades e localizações com
+          facilidade.
+        </p>
+      </div>
+      <div class="feature-card">
+        <h3>Clientes</h3>
+        <p>Centralize dados de hospitais e clínicas para um atendimento ágil.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Comunicações Internas</h3>
+        <p>
+          Mantenha sua equipe alinhada com um sistema de mensagens integrado.
+        </p>
+      </div>
+    </section>
+
+    <!-- Rodapé -->
+    <footer>
+      &copy; <span id="year"></span> CRM Empresarial. Todos os direitos
+      reservados.
+    </footer>
+
+    <script>
+      // Atualiza o ano automaticamente
+      document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
